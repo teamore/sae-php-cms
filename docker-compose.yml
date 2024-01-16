@@ -1,0 +1,31 @@
+version: '3'
+services:
+  # PHP service
+  php:
+    container_name: sae-php-cms
+    hostname: sae-php-cms
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    env_file:
+      - .env      
+
+  # MySQL service
+  mysql:
+    container_name: sae-php-cms-mysql
+    hostname: sae-php-cms-mysql
+    image: mysql:8.0
+    ports:
+      - "3306:3306"  
+    env_file:
+      - .env
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./migrations/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+
+volumes:
+  mysql_data:
