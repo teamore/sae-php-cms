@@ -1,8 +1,19 @@
 <?php
+
+use App\Controller\DefaultController;
+
 require '../vendor/autoload.php';
 
-$loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/../templates');
-$twig = new \Twig\Environment($loader);
+spl_autoload_register(function ($class) {
+    $class = str_replace("\\",DIRECTORY_SEPARATOR,$class);
+    $search = [str_replace("App","/../src",$class), str_replace("Twig","/../vendor/twig",$class)];
+    foreach($search as $qcn) {
+        if (file_exists(__DIR__ . $qcn . '.php')) {
+            require_once(__DIR__ . $qcn . '.php');
+            return;
+        }
+    }
+});
 
 $host = getenv('MYSQL_HOST') ?: 'sae-php-cms-mysql';
 $database = getenv('MYSQL_DATABASE');
@@ -15,6 +26,7 @@ try {
 } catch (PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
 }
+$controller = new DefaultController();
+$controller->index();
 
-echo $twig->render('index.html', ['name' => 'My Blog']);
 ?>
