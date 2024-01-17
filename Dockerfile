@@ -15,9 +15,6 @@ RUN service apache2 restart
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install dependencies using Composer
-# RUN composer install --no-interaction --optimize-autoloader --no-suggest
-
 # Expose port 80 for the web server
 EXPOSE 80
 
