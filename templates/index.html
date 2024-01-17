@@ -4,6 +4,19 @@
         <link rel="stylesheet" href="assets/css/style.css">
     </head>
     <body>
-        {{body|default("hello cms!")}}
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Date</th>
+            </tr>
+            {% for result in results %}
+                <tr>
+                    <td>{{result.title}}</td>
+                    <td>{{result.author}}</td>
+                    <td>{{result.created_at}}</td>
+                </tr>
+            {% endfor %}
+        </table>
     </body>
 </html>
