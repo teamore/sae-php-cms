@@ -15,8 +15,14 @@
                     <td>{{result.title}}</td>
                     <td>{{result.author}}</td>
                     <td>{{result.created_at}}</td>
+                    <td>
+                        <button onclick="location.href='?post_id={{result.id}}';">show</button>
+                        <button onclick="location.href='?post_id={{result.id}}&action=edit';">edit</button>
+                        <button onclick="location.href='?post_id={{result.id}}&action=kill';">kill</button>
+                    </td>
                 </tr>
             {% endfor %}
         </table>
+        <button onclick="location.href='?action=edit';">new</button>
     </body>
 </html>
