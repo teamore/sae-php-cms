@@ -2,7 +2,6 @@ FROM php:8.2-apache
 
 # Set the working directory to /var/www/html
 WORKDIR /var/www/html
-COPY composer.json ./
 
 # Install any dependencies your application needs
 RUN apt-get update && \
