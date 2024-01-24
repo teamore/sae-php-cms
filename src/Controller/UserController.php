@@ -5,20 +5,21 @@ class UserController extends AbstractController {
     public function showLogin() {
         $this->twig->display("login.html");
     }
-    public function doLogin() {
+    public function doLogin(): object|bool {
         $user = $this->getDbConnection()->query("SELECT * FROM `users` WHERE `username`='$_POST[username]' AND `password`='$_POST[password]';")->fetchObject();
         if ($user === false) {
-            return;
+            return false;
             # Authentication Error
         } else {
             $_SESSION['user'] = $user;
-            echo "login successful.";
+            return $user;
         }
     }
-    public function doLogout() {
+    public function doLogout(): bool {
         if (isset($_SESSION['user'])) {
             unset($_SESSION["user"]);
-            echo "logout successful.";    
+            return true;
         }
+        return false;
     }
 }
