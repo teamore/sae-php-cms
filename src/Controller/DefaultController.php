@@ -10,9 +10,7 @@ class DefaultController extends AbstractController
     {
         # retrieve results
         $results = $this->getDbConnection()->query("SELECT * FROM `posts`;")->fetchAll(\PDO::FETCH_ASSOC);
-
-        # call view
-        $this->twig->display('index.html', ['title' => 'CMS Application', 'body' => 'index controller!', 'results' => $results]);
+        $this->display('index.html', ['results' => $results]);
     }
 
     public function postShow($id) {
@@ -21,14 +19,14 @@ class DefaultController extends AbstractController
         $result = $this->getDbConnection()->query("SELECT * FROM `posts` WHERE `id`='$id';")->fetch(\PDO::FETCH_ASSOC);
 
         # call view
-        $this->twig->display('post.html', ['title' => 'CMS Application', 'body' => 'index controller!', 'result' => $result]);
+        $this->display('post.html', ['result' => $result]);
     }
 
     public function postEdit($id) {
         # retrieve results
         $result = $this->getDbConnection()->query("SELECT * FROM `posts` WHERE `id`='$id';")->fetch(\PDO::FETCH_ASSOC);
 
-        $this->twig->display('post_edit.html', ['title' => 'CMS Application', 'body' => 'index controller!', 'result' => $result]);        
+        $this->display('post_edit.html', ['result' => $result]);        
 
     }
     public function postSave($data) {
