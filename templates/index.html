@@ -1,41 +1,39 @@
-<html>
-    <head>
-        <title>{{title|default('Website Title')}}</title>
-        <link rel="stylesheet" href="assets/css/style.css">
-        <script>
-            async function sendDeleteRequest(id) {
-                console.log("delete request for id "+id);
-                fetch('/', {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({post_id: id})  //if you do not want to send any addional data,  replace the complete JSON.stringify(YOUR_ADDITIONAL_DATA) with null
-                }).then(()=>location.reload());
-            }
-        </script>
-    </head>
-    <body>
-        <table>
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block script %}
+    <script>
+        async function sendDeleteRequest(id) {
+            console.log("delete request for id "+id);
+            fetch('/', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({post_id: id})  //if you do not want to send any addional data,  replace the complete JSON.stringify(YOUR_ADDITIONAL_DATA) with null
+            }).then(()=>{window.location = window.location.href;});
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Date</th>
+        </tr>
+        {% for result in results %}
             <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Date</th>
+                <td>{{result.title}}</td>
+                <td>{{result.author}}</td>
+                <td>{{result.created_at}}</td>
+                <td>
+                    <button onclick="location.href='?post_id={{result.id}}';">show</button>
+                    <button onclick="location.href='?post_id={{result.id}}&action=edit';">edit</button>
+                    <button onclick="sendDeleteRequest({{result.id}});">kill</button>
+                </td>
             </tr>
-            {% for result in results %}
-                <tr>
-                    <td>{{result.title}}</td>
-                    <td>{{result.author}}</td>
-                    <td>{{result.created_at}}</td>
-                    <td>
-                        <button onclick="location.href='?post_id={{result.id}}';">show</button>
-                        <button onclick="location.href='?post_id={{result.id}}&action=edit';">edit</button>
-                        <button onclick="sendDeleteRequest({{result.id}});">kill</button>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <button onclick="location.href='?action=edit';">new</button>
-        <button onclick="location.href='?action=login_show';">login</button>
-    </body>
-</html>
+        {% endfor %}
+    </table>
+    <button onclick="location.href='?action=edit';">new</button>
+    <button onclick="location.href='?action=login_show';">login</button>
+{% endblock %}

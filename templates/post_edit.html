@@ -1,25 +1,21 @@
-<html>
-    <head>
-        <title>{{title}}</title>
-        <link rel="stylesheet" href="assets/css/style.css">
-    </head>
-    <body>
-        <form action="/" method="POST">
-            <div>
-                <label for="title">Title</label>
-                <input type="text" name="title" value="{{result.title}}">
-            </div>
-            <div>
-                <label for="author">Author</label>
-                <input type="text" name="author" value="{{result.author}}">
-            </div>
-            <div>
-                <label for="content">Content</label>
-                <textarea name="content">{{result.content}}</textarea>
-            </div>
-            <div><input type="submit" value="send"></div>
-            <input type="hidden" name="id" value="{{result.id}}">
-            <input type="hidden" name="action" value="post_save">
-        </form>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block title %}Edit {{result.title}}{% endblock %}
+{% block content %}
+    <form action="/" method="POST">
+        <div>
+            <label for="title">Title</label>
+            <input type="text" name="title" value="{{result.title}}">
+        </div>
+        <div>
+            <label for="author">Author</label>
+            <input type="text" name="author" value="{{result.author}}">
+        </div>
+        <div>
+            <label for="content">Content</label>
+            <textarea name="content">{{result.content}}</textarea>
+        </div>
+        <div><input type="submit" value="send"></div>
+        <input type="hidden" name="id" value="{{result.id}}">
+        <input type="hidden" name="action" value="post_save">
+    </form>
+{% endblock %}

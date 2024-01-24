@@ -1,23 +1,19 @@
-<html>
-    <head>
-        <title>{{title}}</title>
-        <link rel="stylesheet" href="assets/css/style.css">
-    </head>
-    <body>
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+    <div>
+        Please sign in
+    </div>
+    <form action="/" method="POST">
         <div>
-            Please sign in
+            <label for="username">Username / Email</label>
+            <input type="text" name="username">
         </div>
-        <form action="/" method="POST">
-            <div>
-                <label for="username">Username / Email</label>
-                <input type="text" name="username">
-            </div>
-            <div>
-                <label for="password">Password</label>
-                <input type="password" name="password">
-            </div>
-            <div><input type="submit" value="login"></div>
-            <input type="hidden" name="action" value="login">
-        </form>
-    </body>
-</html>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password">
+        </div>
+        <div><input type="submit" value="login"></div>
+        <input type="hidden" name="action" value="login">
+    </form>
+{% endblock %}

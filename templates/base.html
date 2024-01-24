@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+            <link rel="stylesheet" href="assets/css/style.css">
+            <title>{% block title %}{% endblock %}</title>
+        {% endblock %}
+        {% block script %}
+        {% endblock %}
+    </head>
+    <body>
+        <div id="messages">
+            {% block messages %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div>{{message}}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endblock %}
+        </div>
+        <div id="header">
+            {% block header %}
+                {% if user %}
+                    user logged in as <strong>{{user.username}}</strong>
+                    <button onclick="location.href='?action=logout';">logout</button>
+                {% endif %}
+            {% endblock %}
+        </div>
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div id="footer">
+            {% block footer %}
+                &copy; 2024 by <a href="https://iovano.de">you</a>.
+            {% endblock %}
+        </div>
+    </body>
+</html>

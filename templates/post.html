@@ -1,13 +1,9 @@
-<html>
-    <head>
-        <title>{{title}}</title>
-        <link rel="stylesheet" href="assets/css/style.css">
-    </head>
-    <body>
-        <div>{{result.title}}</div>
-        <div>{{result.author}}</div>
-        <div>{{result.content}}</div>
-        <div>{{result.created_at}}</div>
-        <button onclick="location.href='?';">back</button>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block title %}{{result.title}}{% endblock %}
+{% block content %}
+    <div>{{result.title}}</div>
+    <div>{{result.author}}</div>
+    <div>{{result.content}}</div>
+    <div>{{result.created_at}}</div>
+    <button onclick="location.href='?';">back</button>
+{% endblock %}
