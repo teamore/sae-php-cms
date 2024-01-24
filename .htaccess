@@ -1,3 +1,5 @@
 RewriteEngine on
 RewriteCond %{REQUEST_URI} !public/
 RewriteRule (.*) /public/$1 [L]
+ErrorDocument 404 /error.php?error=404
+ErrorDocument 500 /error.php?error=500
