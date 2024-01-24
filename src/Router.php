@@ -14,11 +14,14 @@ class Router {
         $controller = new DefaultController();
 
         # ROUTING
-        if (isset($_GET['action']) && $_GET['action'] === 'post_save') {
-            $controller->postSave($_GET);
+        if (isset($_POST['action'])) {
+            $controller->postSave($_POST);
         }
-        if (isset($_GET['action']) && $_GET['action'] === 'kill') {
-            $controller->postKill($_GET['post_id']);
+        if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+            $entityBody = file_get_contents('php://input');
+
+            $body = json_decode($entityBody, true);
+            $controller->postKill($body['post_id']);
             die();
         }
     
