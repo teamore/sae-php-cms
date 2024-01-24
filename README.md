@@ -23,3 +23,6 @@ This will return a list of all containers with their corresponding container IDs
 To kill a running container, execute
 `docker kill <container_id>`
 
+# Open Interactive Terminal to container
+To enter a running container via bash, execute
+`docker exec -it sae-php-cms bash`
