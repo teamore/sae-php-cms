@@ -30,12 +30,12 @@
                     <td>
                         <button onclick="location.href='?post_id={{result.id}}';">show</button>
                         <button onclick="location.href='?post_id={{result.id}}&action=edit';">edit</button>
-                        <!-- button onclick="location.href='?post_id={{result.id}}&action=kill';">kill</button -->
                         <button onclick="sendDeleteRequest({{result.id}});">kill</button>
                     </td>
                 </tr>
             {% endfor %}
         </table>
         <button onclick="location.href='?action=edit';">new</button>
+        <button onclick="location.href='?action=login_show';">login</button>
     </body>
 </html>

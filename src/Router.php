@@ -1,6 +1,7 @@
 <?php
 namespace App;
 use App\Controller\DefaultController;
+use App\Controller\UserController;
 class Router {
     public function __construct() { 
         $this->start();
@@ -10,11 +11,31 @@ class Router {
         var_dump($config);
     }
     public function start() {
-        echo $_SERVER['REQUEST_METHOD'];
+        if (isset($_SESSION['user'])) {
+            echo "user logged in as <strong>".$_SESSION['user']->username."</strong>";
+            echo '<button onclick="location.href=\'?action=logout\';">logout</button>';
+        }
         $controller = new DefaultController();
 
         # ROUTING
-        if (isset($_POST['action'])) {
+        if (isset($_GET['action']) && $_GET['action'] === 'login_show') {
+            $userController = new UserController();
+            $userController->showLogin();
+            die();
+        }
+
+        if (isset($_POST['action']) && ($_POST['action'] === 'login')) {
+            $userController = new UserController();
+            $userController->doLogin();
+            die();
+        }
+
+        if (isset($_GET['action']) && ($_GET['action'] === 'logout')) {
+            $userController = new UserController();
+            $userController->doLogout();
+        }
+
+        if (isset($_POST['action']) && ($_POST['action'] === 'post_save')) {
             $controller->postSave($_POST);
         }
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {

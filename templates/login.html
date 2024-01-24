@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>{{title}}</title>
+        <link rel="stylesheet" href="assets/css/style.css">
+    </head>
+    <body>
+        <div>
+            Please sign in
+        </div>
+        <form action="/" method="POST">
+            <div>
+                <label for="username">Username / Email</label>
+                <input type="text" name="username">
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" name="password">
+            </div>
+            <div><input type="submit" value="login"></div>
+            <input type="hidden" name="action" value="login">
+        </form>
+    </body>
+</html>
