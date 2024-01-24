@@ -11,10 +11,6 @@ class Router {
         var_dump($config);
     }
     public function start() {
-        if (isset($_SESSION['user'])) {
-            echo "user logged in as <strong>".$_SESSION['user']->username."</strong>";
-            echo '<button onclick="location.href=\'?action=logout\';">logout</button>';
-        }
         $controller = new DefaultController();
 
         # ROUTING
@@ -26,13 +22,16 @@ class Router {
 
         if (isset($_POST['action']) && ($_POST['action'] === 'login')) {
             $userController = new UserController();
-            $userController->doLogin();
-            die();
+            if ($userController->doLogin()) {
+                $controller->addMessage('Login successful.');
+            }
         }
 
         if (isset($_GET['action']) && ($_GET['action'] === 'logout')) {
             $userController = new UserController();
-            $userController->doLogout();
+            if ($userController->doLogout()) {
+                $controller->addMessage('Logout successful.');
+            }
         }
 
         if (isset($_POST['action']) && ($_POST['action'] === 'post_save')) {
