@@ -26,3 +26,9 @@ To kill a running container, execute
 # Open Interactive Terminal to container
 To enter a running container via bash, execute
 `docker exec -it sae-php-cms bash`
+
+# Sign in as Test User
+In order to log in as test user, please call this URL:
+`http://localhost:8080/?action=login_show`
+and log in with these test credentials:
+username `testuser1` and password `12345`
