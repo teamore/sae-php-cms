@@ -26,7 +26,7 @@ class DefaultController extends AbstractController
         # retrieve results
         $result = $this->getDbConnection()->query("SELECT * FROM `posts` WHERE `id`='$id';")->fetch(\PDO::FETCH_ASSOC);
 
-        $this->display('post_edit.html', ['result' => $result]);        
+        $this->display('post_update.html', ['result' => $result]);        
 
     }
     public function postSave($data) {
