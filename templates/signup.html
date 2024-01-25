@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block header %}
+    <button onclick="location.href='?action=login_show';">login</button>
+{% endblock %}
+{% block messages %}
+    {% if messages %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error">{{message}}</div>
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        <div>
+            Please register
+        </div>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <form action="/" method="POST">
+        <div>
+            <label for="email">Email</label>
+            <input type="text" name="email" value="{{signup.email}}">
+        </div>
+        <div>
+            <label for="username">Username</label>
+            <input type="text" name="username" value="{{signup.username}}">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password">
+        </div>
+        <div><input type="submit" value="signup"></div>
+        <input type="hidden" name="model" value="User">
+    </form>
+{% endblock %}

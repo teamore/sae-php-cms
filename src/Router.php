@@ -14,6 +14,8 @@ class Router {
         $controller = new DefaultController();
 
         # ROUTING
+
+        # LOGIN / LOGOUT
         if (isset($_GET['action']) && $_GET['action'] === 'login_show') {
             $userController = new UserController();
             $userController->showLogin();
@@ -34,6 +36,24 @@ class Router {
             }
         }
 
+        # REGISTRATION
+
+        if (isset($_GET['action']) && ($_GET['action'] === 'user_create')) {
+            $userController = new UserController();
+            $userController->showSignup();
+            die();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (($_POST['model'] ?? false) === 'User') {
+                $userController = new UserController();
+                $userController->doSignup($_POST);
+            }
+        }
+
+
+        # POST CRUD
+
         if (isset($_POST['action']) && ($_POST['action'] === 'post_save')) {
             $controller->postSave($_POST);
         }
@@ -45,7 +65,7 @@ class Router {
             die();
         }
     
-        if (isset($_GET['action']) && $_GET['action'] === 'edit') {
+        if (isset($_GET['action']) && $_GET['action'] === 'post_update') {
             $controller->postEdit($_GET['post_id'] ?? 0);
             die();
         }
