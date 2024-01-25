@@ -27,6 +27,6 @@ CREATE table `users` (
 INSERT INTO `users` 
     (`id`, `username`, `password`, `email`, `created_at`, `updated_at`)
 VALUES
-    (1, 'testuser1', '123', 'user@example.com' , '2019-01-01 00:00:00', '2019-01-01 00:00:00'),
-    (2, 'testuser2', '123', 'user@example.com' , '2019-01-01 00:00:00', '2019-01-01 00:00:00'),
-    (3, 'testuser3', '123', 'user@example.com' , '2019-01-01 00:00:00', '2019-01-01 00:00:00');
+    (1, 'testuser1', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'user@example.com' , '2019-01-01 00:00:00', '2019-01-01 00:00:00'),
+    (2, 'testuser2', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'user@example.com' , '2019-01-01 00:00:00', '2019-01-01 00:00:00'),
+    (3, 'testuser3', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'user@example.com' , '2019-01-01 00:00:00', '2019-01-01 00:00:00');
