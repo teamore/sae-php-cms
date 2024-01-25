@@ -12,8 +12,8 @@ class AbstractController {
         $this->messages[] = $message;
     }
     public function display($template, $payload = []) {
-        $payload['user'] = $_SESSION['user'] ?? null;
-        $payload['messages'] = $this->messages;
+        $payload['user'] = $payload['user'] ?? $_SESSION['user'] ?? null;
+        $payload['messages'] = $payload['messages'] ?? $this->messages;
         $this->twig->display($template, $payload);
     }
     public function getDbConnection() {
@@ -28,7 +28,7 @@ class AbstractController {
             $pdo = new \PDO("mysql:host=$host;dbname=$database", $username, $password);
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
-            echo "Connection failed: " . $e->getMessage();
+            $this->addMessage("Connection failed: " . $e->getMessage());
         }
         return $pdo;
     }    
