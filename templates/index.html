@@ -28,6 +28,7 @@
                 <td onclick="location.href='?post_id={{result.id}}';">{{result.author}}</td>
                 <td onclick="location.href='?post_id={{result.id}}';">{{result.created_at}}</td>
                 <td>
+                    <button onclick="location.href='?post_id={{result.id}}';">show</button>
                     <button onclick="location.href='?post_id={{result.id}}&action=edit';">edit</button>
                     <button onclick="sendDeleteRequest({{result.id}});">kill</button>
                 </td>
