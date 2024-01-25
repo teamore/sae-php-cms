@@ -24,17 +24,22 @@
         </tr>
         {% for result in results %}
             <tr>
-                <td>{{result.title}}</td>
-                <td>{{result.author}}</td>
-                <td>{{result.created_at}}</td>
+                <td onclick="location.href='?post_id={{result.id}}';">{{result.title}}</td>
+                <td onclick="location.href='?post_id={{result.id}}';">{{result.author}}</td>
+                <td onclick="location.href='?post_id={{result.id}}';">{{result.created_at}}</td>
                 <td>
-                    <button onclick="location.href='?post_id={{result.id}}';">show</button>
                     <button onclick="location.href='?post_id={{result.id}}&action=edit';">edit</button>
                     <button onclick="sendDeleteRequest({{result.id}});">kill</button>
                 </td>
             </tr>
         {% endfor %}
+        <tr>
+            <td colspan="100%" onclick="location.href='?action=edit';">
+                <button onclick="location.href='?action=edit';">add</button>
+            </td>
+        </tr>
     </table>
-    <button onclick="location.href='?action=edit';">new</button>
-    <button onclick="location.href='?action=login_show';">login</button>
+{% endblock %}
+{% block appendix %}
+    <button onclick="location.href='?';">back</button>
 {% endblock %}

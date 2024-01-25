@@ -14,7 +14,15 @@
             <label for="content">Content</label>
             <textarea name="content">{{result.content}}</textarea>
         </div>
-        <div><input type="submit" value="send"></div>
+        <div>
+            {% if result.id %}
+                <label for="update"></label>
+                <input type="submit" value="update">
+            {% else %}
+                <label for="add"></label>
+                <input type="submit" value="add">
+            {% endif %}
+        </div>
         <input type="hidden" name="id" value="{{result.id}}">
         <input type="hidden" name="action" value="post_save">
     </form>

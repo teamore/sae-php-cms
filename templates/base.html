@@ -21,13 +21,20 @@
         <div id="header">
             {% block header %}
                 {% if user %}
-                    user logged in as <strong>{{user.username}}</strong>
                     <button onclick="location.href='?action=logout';">logout</button>
+                    <strong>{{user.username}}</strong>
+                {% else %}
+                    <button onclick="location.href='?action=login_show';">login</button>
                 {% endif %}
             {% endblock %}
         </div>
         <div id="content">
             {% block content %}
+            {% endblock %}
+        </div>
+        <div id="appendix">
+            {% block appendix %}
+            <button onclick="location.href='?';">back</button>
             {% endblock %}
         </div>
         <div id="footer">

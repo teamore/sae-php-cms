@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
-{% block content %}
+{% block messages %}
     <div>
         Please sign in
     </div>
+{% endblock %}
+{% block content %}
     <form action="/" method="POST">
         <div>
             <label for="username">Username / Email</label>
