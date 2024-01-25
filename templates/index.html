@@ -14,6 +14,9 @@
                 }).then(()=>{window.location = window.location.href;});
             }
         }
+        function showPost(id, append = '') {
+            location.href='?post_id='+id+append;
+        }
     </script>
 {% endblock %}
 {% block content %}
@@ -26,12 +29,12 @@
         </tr>
         {% for result in results %}
             <tr>
-                <td onclick="location.href='?post_id={{result.id}}';">{{result.title}}</td>
-                <td onclick="location.href='?post_id={{result.id}}';">{{result.author}}</td>
-                <td onclick="location.href='?post_id={{result.id}}';">{{result.created_at}}</td>
+                <td onclick="showPost({{result.id}})">{{result.title}}</td>
+                <td onclick="showPost({{result.id}})">{{result.author}}</td>
+                <td onclick="showPost({{result.id}})">{{result.created_at}}</td>
                 <td>
-                    <button onclick="location.href='?post_id={{result.id}}';">show</button>
-                    <button onclick="location.href='?post_id={{result.id}}&action=edit';">edit</button>
+                    <button onclick="showPost({{result.id}})">show</button>
+                    <button onclick="showPost({{result.id}},'&action=edit')">edit</button>
                     <button onclick="sendDeleteRequest({{result.id}},'{{result.title}}');">kill</button>
                 </td>
             </tr>
