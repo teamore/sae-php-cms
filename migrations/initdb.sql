@@ -21,9 +21,9 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`id`, `user`, `title`, `author`, `content`, `created_at`, `updated_at`) VALUES
-(56, 1, 'Testeintrag', '', 'Lorem Ipsum', '2024-01-31 18:26:32', '2024-01-31 18:41:23'),
-(57, 1, 'Neuer Eintrag', '', 'Mit neuem Inhalt', '2024-01-31 18:41:57', '2024-01-31 18:41:57'),
-(58, 2, 'Mein toller neuer Beitrag', '', 'Mit hochinteressantem Inhalt', '2024-01-31 18:44:17', '2024-01-31 18:44:17');
+(1, 1, 'Testeintrag', '', 'Lorem Ipsum', '2024-01-31 18:26:32', '2024-01-31 18:41:23'),
+(2, 1, 'Neuer Eintrag', '', 'Mit neuem Inhalt', '2024-01-31 18:41:57', '2024-01-31 18:41:57'),
+(3, 2, 'Mein toller neuer Beitrag', '', 'Mit hochinteressantem Inhalt', '2024-01-31 18:44:17', '2024-01-31 18:44:17');
 
 -- --------------------------------------------------------
 
