@@ -11,8 +11,14 @@ class AbstractController {
     public function addMessage($message) {
         $this->messages[] = $message;
     }
+    public function getUser():Object|null {
+        return $_SESSION['user'] ?? null;
+    }
+    public function getUserId():int|null {
+        return ($this->getUser() ? $this->getUser()->id : null);
+    }
     public function display($template, $payload = []) {
-        $payload['user'] = $payload['user'] ?? $_SESSION['user'] ?? null;
+        $payload['user'] = $payload['user'] ?? $this->getUser() ?? null;
         $payload['messages'] = $payload['messages'] ?? $this->messages;
         $this->twig->display($template, $payload);
     }

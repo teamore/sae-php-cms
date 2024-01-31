@@ -23,7 +23,7 @@ class UserController extends AbstractController {
         }
     }
     public function doLogout(): bool {
-        if (isset($_SESSION['user'])) {
+        if ($this->getUser()) {
             unset($_SESSION["user"]);
             return true;
         }

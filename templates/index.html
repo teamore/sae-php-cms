@@ -34,8 +34,10 @@
                 <td onclick="showPost({{result.id}})">{{result.created_at}}</td>
                 <td>
                     <button onclick="showPost({{result.id}})">show</button>
-                    <button onclick="showPost({{result.id}},'&action=post_update')">edit</button>
-                    <button onclick="sendDeleteRequest({{result.id}},'{{result.title}}');">kill</button>
+                    {% if (user and user.id == result.user) %}
+                        <button onclick="showPost({{result.id}},'&action=post_update')">edit</button>
+                        <button onclick="sendDeleteRequest({{result.id}},'{{result.title}}');">kill</button>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
