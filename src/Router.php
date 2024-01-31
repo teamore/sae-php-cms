@@ -55,7 +55,11 @@ class Router {
         # POST CRUD
 
         if (isset($_POST['action']) && ($_POST['action'] === 'post_save')) {
-            $controller->postSave($_POST);
+            try {
+                $controller->postSave($_POST);
+            } catch (\Exception $e) {
+                $controller->addMessage($e->getMessage());
+            }
         }
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
             $entityBody = file_get_contents('php://input');
@@ -66,7 +70,12 @@ class Router {
         }
     
         if (isset($_GET['action']) && $_GET['action'] === 'post_update') {
-            $controller->postEdit($_GET['post_id'] ?? 0);
+            try {
+                $controller->postEdit($_GET['post_id'] ?? 0);
+            } catch (\Exception $e) {
+                $controller->addMessage($e->getMessage());
+                $controller->display('error.html');
+            }
             die();
         }
         if (isset($_GET['post_id'])) {
