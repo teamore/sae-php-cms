@@ -21,9 +21,30 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`id`, `user`, `title`, `author`, `content`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Testeintrag', '', 'Lorem Ipsum', '2024-01-31 18:26:32', '2024-01-31 18:41:23'),
-(2, 1, 'Neuer Eintrag', '', 'Mit neuem Inhalt', '2024-01-31 18:41:57', '2024-01-31 18:41:57'),
+(1, 1, 'Testeinträgchen', '', 'Lorem Ipsum', '2024-01-31 18:26:32', '2024-01-31 20:21:34'),
 (3, 2, 'Mein toller neuer Beitrag', '', 'Mit hochinteressantem Inhalt', '2024-01-31 18:44:17', '2024-01-31 18:44:17');
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `post_likes`
+--
+
+CREATE TABLE `post_likes` (
+  `id` int UNSIGNED NOT NULL,
+  `user` int UNSIGNED NOT NULL,
+  `post` int UNSIGNED NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Daten für Tabelle `post_likes`
+--
+
+INSERT INTO `post_likes` (`id`, `user`, `post`, `created_at`) VALUES
+(1, 1, 3, '2024-02-01 19:37:04'),
+(2, 2, 3, '2024-02-01 20:30:59'),
+(3, 2, 1, '2024-02-01 20:31:01');
 
 -- --------------------------------------------------------
 
@@ -46,7 +67,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `created_at`, `updated_at`) VALUES
 (1, 'testuser1', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-01-31 18:25:41', '2024-01-31 18:25:41'),
-(2, 'testuser2', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-01-31 18:43:45', '2024-01-31 18:43:45');
+(2, 'testuser2', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-01-31 18:43:45', '2024-01-31 18:43:45'),
+(3, 'testuser2', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-02-01 19:52:35', '2024-02-01 19:52:35');
 
 --
 -- Indizes der exportierten Tabellen
@@ -58,6 +80,15 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `created_at`, `updat
 ALTER TABLE `posts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_user` (`user`);
+
+--
+-- Indizes für die Tabelle `post_likes`
+--
+ALTER TABLE `post_likes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_post` (`user`,`post`) USING BTREE,
+  ADD KEY `post` (`post`),
+  ADD KEY `user` (`user`);
 
 --
 -- Indizes für die Tabelle `users`
@@ -76,10 +107,16 @@ ALTER TABLE `posts`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
+-- AUTO_INCREMENT für Tabelle `post_likes`
+--
+ALTER TABLE `post_likes`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
 -- AUTO_INCREMENT für Tabelle `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints der exportierten Tabellen
@@ -90,4 +127,11 @@ ALTER TABLE `users`
 --
 ALTER TABLE `posts`
   ADD CONSTRAINT `fk_user` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `post_likes`
+--
+ALTER TABLE `post_likes`
+  ADD CONSTRAINT `post_likes_ibfk_1` FOREIGN KEY (`post`) REFERENCES `posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `post_likes_ibfk_2` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;

@@ -14,10 +14,29 @@ class DefaultController extends AbstractController
     }
 
     public function postShow($id) {
+        $uid = $this->getUserId();
 
         # retrieve results
-        $result = $this->getDbConnection()->query("SELECT * FROM `posts` WHERE `id`='$id';")->fetch(\PDO::FETCH_ASSOC);
+        $result = $this->getDbConnection()->query("
+            SELECT p.*, u.`username`, u.`email`, COUNT(*) AS `likes` FROM `posts` p 
+            LEFT JOIN
+                `users` u
+            ON p.`user` = u.`id`
+            LEFT JOIN
+                `post_likes` l
+            ON l.`post` = p.`id`
+            WHERE p.`id`='$id'
+            GROUP BY l.`post`
+            
+            ;
+            ")->fetch(\PDO::FETCH_ASSOC);
 
+        if ($uid) {
+            $result2 = $this->getDbConnection()->query("
+            SELECT `id` FROM `post_likes` WHERE `post`='$id' AND `user`='$uid';
+            ")->fetch(\PDO::FETCH_ASSOC);
+            $result['ilike'] = ($result2 !== false);
+        }            
         # call view
         $this->display('post.html', ['result' => $result]);
     }
@@ -85,6 +104,21 @@ class DefaultController extends AbstractController
         }
         $result = $this->getDbConnection()->exec("DELETE FROM `posts` WHERE `id`='$id' AND `user`='$uid' LIMIT 1;");
         return $this->index();
+    }
+
+    public function postLikeSave($postId) {
+        $uid = $this->getUserId();
+        $result = $this->getDbConnection()->exec("INSERT INTO `post_likes` 
+        (`post`,`user`,`created_at`) VALUES 
+        ('$postId', '$uid', '".date('Y-m-d H:i:s')."');
+        ");
+        return $result;
+    }
+
+    public function postLikeDelete($postId) {
+        $uid = $this->getUserId();
+        $result = $this->getDbConnection()->exec("DELETE FROM `post_likes` WHERE `post`=$postId AND `user`=$uid;");
+        return $result;
     }
 
 

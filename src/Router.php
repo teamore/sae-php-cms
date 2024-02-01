@@ -10,8 +10,24 @@ class Router {
         $config = yaml_parse_file("../routes.yaml");
         var_dump($config);
     }
+
     public function start() {
         $controller = new DefaultController();
+
+        if (isset($_GET['post_like'])) {
+            try {
+                $controller->postLikeSave($_GET['post_like']);
+            } catch (\Exception $e) {
+                $controller->addMessage($e->getMessage());
+            }
+        }
+        if (isset($_GET['post_unlike'])) {
+            try {
+                $controller->postLikeDelete($_GET['post_unlike']);
+            } catch (\Exception $e) {
+                $controller->addMessage($e->getMessage());
+            }
+        }
 
         # ROUTING
 
@@ -48,6 +64,9 @@ class Router {
             if (($_POST['model'] ?? false) === 'User') {
                 $userController = new UserController();
                 $userController->doSignup($_POST);
+            }
+            if (($_POST['model'] ?? false) === 'PostLike') {
+                $controller->postLikeSave($_POST['post_id']);
             }
         }
 
