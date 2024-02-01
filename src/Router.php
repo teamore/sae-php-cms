@@ -12,15 +12,10 @@ class Router {
     }
 
     public function start() {
+        $requestBody = json_decode(file_get_contents('php://input'), true);
+
         $controller = new DefaultController();
 
-        if (isset($_GET['post_like'])) {
-            try {
-                $controller->postLikeSave($_GET['post_like']);
-            } catch (\Exception $e) {
-                $controller->addMessage($e->getMessage());
-            }
-        }
         if (isset($_GET['post_unlike'])) {
             try {
                 $controller->postLikeDelete($_GET['post_unlike']);
@@ -65,9 +60,24 @@ class Router {
                 $userController = new UserController();
                 $userController->doSignup($_POST);
             }
-            if (($_POST['model'] ?? false) === 'PostLike') {
-                $controller->postLikeSave($_POST['post_id']);
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+            if (in_array($requestBody['action'], ['like', 'unlike'])) {
+                try {
+                    if ($requestBody['action'] === 'like') {
+                        $data['result'] = $controller->postLikeSave($_GET['post_id']);
+                    } else {
+                        $data['result'] = $controller->postLikeDelete($_GET['post_id']);
+                    }
+                } catch (\PDOException $e) {
+                    $data['error'] = $e->getMessage();
+                    http_response_code(304);
+                }
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode($data);
+                die();
             }
+
         }
 
 
@@ -81,10 +91,7 @@ class Router {
             }
         }
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-            $entityBody = file_get_contents('php://input');
-
-            $body = json_decode($entityBody, true);
-            $controller->postKill($body['post_id']);
+            $controller->postKill($requestBody['post_id']);
             die();
         }
     
