@@ -18,7 +18,7 @@ class DefaultController extends AbstractController
 
         # retrieve results
         $result = $this->getDbConnection()->query("
-            SELECT p.*, u.`username`, u.`email`, COUNT(*) AS `likes` FROM `posts` p 
+            SELECT p.*, u.`username`, u.`email`, COUNT(l.`id`) AS `likes` FROM `posts` p 
             LEFT JOIN
                 `users` u
             ON p.`user` = u.`id`
