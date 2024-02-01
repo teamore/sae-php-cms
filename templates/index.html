@@ -10,7 +10,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({post_id: id})  //if you do not want to send any addional data,  replace the complete JSON.stringify(YOUR_ADDITIONAL_DATA) with null
+                    body: JSON.stringify({post_id: id})
                 }).then(()=>{window.location = window.location.href;});
             }
         }
