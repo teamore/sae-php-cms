@@ -13,8 +13,12 @@
             {% block messages %}
                 {% if messages %}
                     {% for message in messages %}
-                        <div>{{message}}</div>
-                    {% endfor %}
+                        {% if message.code is defined %}
+                            <div class="error"><span class="status">{{message.code}}</span> {{message.message}}</div>
+                        {% else %}
+                            <div class="error">{{message}}</div>
+                        {% endif %}
+                    {% endfor %}                
                 {% endif %}
             {% endblock %}
         </div>
