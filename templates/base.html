@@ -5,6 +5,24 @@
             <link rel="stylesheet" href="/assets/css/style.css">
             <title>{% block title %}{% endblock %}</title>
         {% endblock %}
+        {% block mainscript %}
+            <script>
+                async function handleResponse(response, reloadOnSuccess = false) {
+                    var responseBody = await response.json();
+                    if (response.status === 200 && reloadOnSuccess === true) {
+                        window.location = window.location.href;
+                    } else {
+                        if (responseBody.messages) {
+                            for (message of responseBody.messages) {
+                                alert(message.code+": "+message.message);
+                            }
+                        }
+                    }
+
+                }
+
+            </script>
+        {% endblock %}
         {% block script %}
         {% endblock %}
     </head>
@@ -14,7 +32,7 @@
                 {% if messages %}
                     {% for message in messages %}
                         {% if message.code is defined %}
-                            <div {% if message.code >= 400 %}class="error"{% endif %}><span class="status">{{message.code}}</span> {{message.message}}</div>
+                            <div {% if message.code >= 400 %}class="error"{% elseif message.code >= 300 %}class="notice"{% endif %}><span class="status">{{message.code}}</span> {{message.message}}</div>
                         {% else %}
                             <div>{{message}}</div>
                         {% endif %}
