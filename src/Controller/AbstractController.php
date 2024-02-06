@@ -37,7 +37,7 @@ class AbstractController {
     public function setQuery($query) {
         $this->query = $query;
     }
-    public function addMessage(String|Object $message) {
+    public function addMessage(String|Array $message) {
         $this->messages[] = $message;
     }
     public function getMessages(): ?Array {
