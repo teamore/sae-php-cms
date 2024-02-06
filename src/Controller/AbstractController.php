@@ -4,12 +4,27 @@ class AbstractController {
     protected $loader;
     protected $twig;
     protected $messages = [];
-    public function __construct() {
+    protected $query = null;
+    protected $requestBody = null;
+    public function __construct($query = null) {
         $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/../../templates');
         $this->twig = new \Twig\Environment($this->loader);    
+        if (isset($query)) {
+            $this->setQuery($query);
+        }
+        $this->requestBody = json_decode(file_get_contents('php://input'), true);
+    }
+    public function setQuery($query) {
+        $this->query = $query;
     }
     public function addMessage($message) {
         $this->messages[] = $message;
+    }
+    public function getMessages() {
+        return $this->messages;
+    }
+    public function setMessages($messages) {
+        $this->messages = $messages;
     }
     public function getUser():Object|null {
         return $_SESSION['user'] ?? null;

@@ -15,16 +15,18 @@ class UserController extends AbstractController {
             `password`='".hash('sha256', $_POST['password'])."';
         ")->fetchObject();
         if ($user === false) {
-            return false;
+            throw new \Exception("Authentication Failed.", 401);
             # Authentication Error
         } else {
             $_SESSION['user'] = $user;
+            $this->addMessage('Login successful.');
             return $user;
         }
     }
     public function doLogout(): bool {
         if ($this->getUser()) {
             unset($_SESSION["user"]);
+            $this->addMessage("Logout successul.");
             return true;
         }
         return false;
@@ -57,7 +59,8 @@ class UserController extends AbstractController {
         return $errors;
     }
 
-    public function doSignup($data) {
+    public function doSignup($data = null) {
+        $data = $data ?? $_REQUEST;
         $requirements = 
             [
                 'email' => ['regex' => '/^\S+@\S+\.\S+$/'],

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 {% block header %}
-    <button onclick="location.href='?action=user_create';">signup</button>
+    <button onclick="location.href='/signup';">signup</button>
 {% endblock %}
 {% block messages %}
     <div>
@@ -9,7 +9,7 @@
     </div>
 {% endblock %}
 {% block content %}
-    <form action="/" method="POST">
+    <form action="/login" method="POST">
         <div>
             <label for="username">Username / Email</label>
             <input type="text" name="username">

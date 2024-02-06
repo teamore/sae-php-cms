@@ -5,17 +5,16 @@
         async function sendDeleteRequest(id, title = '') {
             if (confirm('Are you sure you want to delete '+(title?'"'+title+'"':'the post')+' (id #'+id+')?')) {
                 console.log("delete request for id "+id);
-                fetch('/', {
+                fetch('/posts/'+id, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({post_id: id})
-                }).then(()=>{window.location = window.location.href;});
+                    }
+                }).then(()=>{window.location = '/';});
             }
         }
         function showPost(id, append = '') {
-            location.href='?post_id='+id+append;
+            location.href='/posts/'+id+(append ? "/" + append : '');
         }
     </script>
 {% endblock %}
@@ -35,19 +34,19 @@
                 <td>
                     <button onclick="showPost({{result.id}})">show</button>
                     {% if (user and user.id == result.user) %}
-                        <button onclick="showPost({{result.id}},'&action=post_update')">edit</button>
+                        <button onclick="showPost('edit/{{result.id}}')">edit</button>
                         <button onclick="sendDeleteRequest({{result.id}},'{{result.title}}');">kill</button>
                     {% endif %}
                 </td>
             </tr>
         {% endfor %}
         <tr>
-            <td colspan="100%" onclick="location.href='?action=post_update';">
-                <button onclick="location.href='?action=post_update';">add</button>
+            <td colspan="100%" onclick="location.href='/posts/edit';">
+                <button onclick="location.href='/posts/edit';">add</button>
             </td>
         </tr>
     </table>
 {% endblock %}
 {% block appendix %}
-    <button onclick="location.href='?';">back</button>
+    <button onclick="location.href='/';">back</button>
 {% endblock %}

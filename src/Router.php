@@ -1,114 +1,88 @@
 <?php
 namespace App;
-use App\Controller\DefaultController;
-use App\Controller\UserController;
 class Router {
-    public function __construct() { 
-        $this->start();
+    private $routeConfigurationFile = "../config/routes.yaml";
+    private $routing = null;
+    public function __construct($routeConfigurationFile = null) { 
+        $this->readRouteConfiguration($routeConfigurationFile);
+        //$this->start();
+        $this->run();
     }
-    public function readConfig() {
-        $config = yaml_parse_file("../routes.yaml");
-        var_dump($config);
+    public function readRouteConfiguration($routeConfigurationFile) {
+        if (!is_null($routeConfigurationFile)) {
+            $this->routeConfigurationFile = $routeConfigurationFile;
+        }
+        if (file_exists($this->routeConfigurationFile)) {
+            $this->routing = yaml_parse_file($this->routeConfigurationFile);
+        } else {
+            throw new \Exception("Route Configuration file not found.", 500);
+        }
+
     }
+    public function run($uri = null, $method = null, $messages = []) {
+        
+        /* get parameters and body content from request */
+        $requestUri = parse_url($uri ?? $_SERVER['REQUEST_URI']);
+        $requestMethod = $method ?? $_SERVER['REQUEST_METHOD'];
+        $requestPath = $requestUri['path'];
+        parse_str($requestUri['query'] ?? '', $requestQuery);
 
-    public function start() {
-        $requestBody = json_decode(file_get_contents('php://input'), true);
-
-        $controller = new DefaultController();
-
-        if (isset($_GET['post_unlike'])) {
-            try {
-                $controller->postLikeDelete($_GET['post_unlike']);
-            } catch (\Exception $e) {
-                $controller->addMessage($e->getMessage());
+        /* iterate trough defined routes */
+        foreach($this->routing as $route => $config) {
+            /* create a list of request methods */
+            $methods = explode(",",$config['method'] ?? 'PUT,GET,POST,DELETE,PATCH,HEAD,OPTIONS');
+            /* compare routing parameters with user request */
+            if (!in_array($requestMethod, $methods)) {
+                continue;
             }
-        }
 
-        # ROUTING
-
-        # LOGIN / LOGOUT
-        if (isset($_GET['action']) && $_GET['action'] === 'login_show') {
-            $userController = new UserController();
-            $userController->showLogin();
-            die();
-        }
-
-        if (isset($_POST['action']) && ($_POST['action'] === 'login')) {
-            $userController = new UserController();
-            if ($userController->doLogin()) {
-                $controller->addMessage('Login successful.');
-            }
-        }
-
-        if (isset($_GET['action']) && ($_GET['action'] === 'logout')) {
-            $userController = new UserController();
-            if ($userController->doLogout()) {
-                $controller->addMessage('Logout successful.');
-            }
-        }
-
-        # REGISTRATION
-
-        if (isset($_GET['action']) && ($_GET['action'] === 'user_create')) {
-            $userController = new UserController();
-            $userController->showSignup();
-            die();
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (($_POST['model'] ?? false) === 'User') {
-                $userController = new UserController();
-                $userController->doSignup($_POST);
-            }
-        }
-        if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-            if (in_array($requestBody['action'], ['like', 'unlike'])) {
-                try {
-                    if ($requestBody['action'] === 'like') {
-                        $data['result'] = $controller->postLikeSave($_GET['post_id']);
-                    } else {
-                        $data['result'] = $controller->postLikeDelete($_GET['post_id']);
+            $match = $config['match'] ?? null;
+            $matches = false;
+            if ($match) {
+                /* if a "match" directive is present, perform a regexp match */
+                preg_match_all($match, $requestPath, $matches, PREG_SET_ORDER);
+                if ($matches && is_array($config['match_params'] ?? null)) {
+                    foreach($config['match_params'] as $key => $param) {
+                        $requestQuery[$param] = $matches[0][$key];
                     }
-                } catch (\PDOException $e) {
-                    $data['error'] = $e->getMessage();
-                    http_response_code(304);
                 }
-                header('Content-Type: application/json; charset=utf-8');
-                echo json_encode($data);
+            }
+
+            if (!$matches) {
+                /* gather all aliases for this route */
+                $aliases = array_filter(array_merge([$route], is_string($config['alias'] ?? '') ? [$config['alias'] ?? ''] : ($config['alias'] ?? [])));
+
+                if (!in_array($requestPath, $aliases) && !in_array(substr($requestPath, 1), $aliases)) {
+                    continue;
+                }
+            }
+
+                
+            /* Instantiate Controller specified in the route */
+            $controllerClassName = "\App\Controller\\".($config['controller'] ?? 'DefaultController');
+            $controller = new $controllerClassName();
+            $controller->setMessages($messages);
+            /* provide request query to controller */
+            $controller->setQuery($requestQuery);
+            $actionName = $config['action'] ?? 'index';
+            $exception = null;
+            try {
+                /* call the specified action */
+                $result = $controller->$actionName();
+            } catch (\Exception $exception) {
+                $controller->addMessage($exception->getMessage());
+                http_response_code($exception->getCode());
+                $controller->display('error.html');
                 die();
             }
-
-        }
-
-
-        # POST CRUD
-
-        if (isset($_POST['action']) && ($_POST['action'] === 'post_save')) {
-            try {
-                $controller->postSave($_POST);
-            } catch (\Exception $e) {
-                $controller->addMessage($e->getMessage());
+            /* redirect to another route if specified while keeping current message stack */
+            if (($config['redirect'] ?? '')) {
+                if (is_array($config['redirect']) && $config['redirect'][$result] ?? '') {
+                    $this->run($config['redirect'][$result], 'GET', $controller->getMessages());
+                } else {
+                    $this->run($config['redirect'], 'GET', $controller->getMessages());
+                }
             }
         }
-        if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-            $controller->postKill($requestBody['post_id']);
-            die();
-        }
-    
-        if (isset($_GET['action']) && $_GET['action'] === 'post_update') {
-            try {
-                $controller->postEdit($_GET['post_id'] ?? 0);
-            } catch (\Exception $e) {
-                $controller->addMessage($e->getMessage());
-                $controller->display('error.html');
-            }
-            die();
-        }
-        if (isset($_GET['post_id'])) {
-            $controller->postShow($_GET['post_id']);
-            die();
-        }
-        $controller->index();
-
     }
 }

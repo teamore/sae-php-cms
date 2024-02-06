@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 {% block header %}
-    <button onclick="location.href='?action=login_show';">login</button>
+    <button onclick="location.href='/login';">login</button>
 {% endblock %}
 {% block messages %}
     {% if messages %}
@@ -17,7 +17,7 @@
     {% endif %}
 {% endblock %}
 {% block content %}
-    <form action="/" method="POST">
+    <form action="/signup" method="POST">
         <div>
             <label for="email">Email</label>
             <input type="text" name="email" value="{{signup.email}}">

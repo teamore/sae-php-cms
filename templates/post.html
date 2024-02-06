@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% block script %}
     <script>
-        async function sendPostLikeRequest(id, action = "like") {
+        async function sendPostLikeRequest(id, method = "PUT") {
             console.log("send like request for post #id "+id);
-            fetch('?post_id='+id, {
-                method: 'PUT',
+            fetch('/posts/'+id+'/like', {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({"action": action})
+                }
             }).then((response)=>{
                 window.location = window.location.href;
             });
@@ -28,9 +27,9 @@
     </table>
     <div>
         {% if result.ilike %}
-        <button onclick="sendPostLikeRequest({{result.id}}, 'unlike');">unlike</button>
+        <button onclick="sendPostLikeRequest({{result.id}}, 'DELETE');">unlike</button>
         {% else %}
-            <button onclick="sendPostLikeRequest({{result.id}});">like</button>
+            <button onclick="sendPostLikeRequest({{result.id}}, 'PUT');">like</button>
         {% endif %}
     </div>
 {% endblock %}

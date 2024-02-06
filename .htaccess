@@ -1,5 +1,10 @@
 RewriteEngine on
-RewriteCond %{REQUEST_URI} !public/
-RewriteRule (.*) /public/$1 [L]
+
+RewriteCond %{REQUEST_URI} ^/assets/
+RewriteRule (.*) public/$1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^.*$ /public/index.php?%{QUERY_STRING} [NC,L]
+
 ErrorDocument 404 /error.php?error=404
 ErrorDocument 500 /error.php?error=500
