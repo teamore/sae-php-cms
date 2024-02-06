@@ -35,6 +35,7 @@ class DefaultController extends AbstractController
         if (!$result) {
             throw new \Exception("This Resource does not exist", 404);
         }
+        $result['media'] = json_decode($result['media']);   
         if ($uid) {
             $result2 = $this->getDbConnection()->query("
             SELECT `id` FROM `post_likes` WHERE `post`='$id' AND `user`='$uid';
@@ -62,6 +63,7 @@ class DefaultController extends AbstractController
     }
     public function postSave() {
         $data = $_REQUEST;
+
         # TODO: perform mysql query sanitation
         $user = $this->getUser();
         if (!$user) {
@@ -71,7 +73,7 @@ class DefaultController extends AbstractController
             if (!is_numeric($data['id'])) {
                 return;
             }
-            return $this->getDbConnection()->exec("
+            $result = $this->getDbConnection()->query("
                 UPDATE `posts` SET 
                 `title`='$data[title]',
                 `author`='$data[author]',
@@ -99,8 +101,35 @@ class DefaultController extends AbstractController
                     '".date('Y-m-d H:i:s')."'
 
                 );";
-            return $this->getDbConnection()->exec($sql);
+            $conn = $this->getDbConnection();
+            $result = $conn->query($sql); 
+            $data['id'] = $conn->lastInsertId();
         }
+        $media = [];
+        $files = 0;
+        foreach($_FILES as $file) {
+            if ($file['error']) {
+                $this->addMessage(["code"=>422, "message"=>"File ".$file['name']." could not be uploaded."]);
+            }
+            if ($file['tmp_name'] && !$file['error']) {
+                $path = "assets/uploads/posts/$data[id]/";
+                $fullPath = "/var/www/html/public/$path";
+                if (!file_exists($fullPath)) {
+                    mkdir($fullPath, 0777, true);
+                }
+                $fileDestination = $fullPath .$file['name'];
+                if (!file_exists($fileDestination)) {
+                    move_uploaded_file($file['tmp_name'], $fileDestination);
+                }
+                $media[] = ['path'=>$path, 'name'=>$file['name'], 'size'=>filesize($fileDestination), 'original'=>$file['name']];           
+                $files++;
+            }
+        }
+        if ($files > 0) {
+            $sql = "UPDATE `posts` SET `media`='".json_encode($media)."' WHERE `id`='$data[id]'";
+            $this->getDbConnection()->exec($sql);    
+        }
+        return $result;
     }
     public function postKill() {
         $id = $this->query['post_id'];
@@ -114,6 +143,10 @@ class DefaultController extends AbstractController
         $uid = $this->getUserId(true);
 
         try {
+            $result = $this->getDbConnection()->query("SELECT `user` FROM `posts` WHERE `id`='$postId'")->fetchColumn();
+            if ($uid === $result) {
+                throw new \Exception('Users must not like their own posts.', 400);
+            }
             $result = $this->getDbConnection()->exec("INSERT INTO `post_likes` 
             (`post`,`user`,`created_at`) VALUES 
             ('$postId', '$uid', '".date('Y-m-d H:i:s')."');
@@ -121,7 +154,7 @@ class DefaultController extends AbstractController
         } catch (\PDOException $e) {
             throw new \Exception($e->getMessage(),304);
         }
-        return $result;
+        return ["affectedRows" => $result];
     }
 
     public function postLikeDelete() {
@@ -131,9 +164,12 @@ class DefaultController extends AbstractController
         try {
             $result = $this->getDbConnection()->exec("DELETE FROM `post_likes` WHERE `post`=$postId AND `user`=$uid;");
         } catch (\PDOException $e) {
-            throw new \Exception($e->getMessage(),304);
+            throw new \Exception($e->getMessage(),500);
         }
-        return $result;
+        if (!$result) {
+            throw new \Exception("This resource has already been deleted.",304);
+        }
+        return ["affectedRows" => $result];
     }
 
 

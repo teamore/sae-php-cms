@@ -3,14 +3,13 @@
     <script>
         async function sendPostLikeRequest(id, method = "PUT") {
             console.log("send like request for post #id "+id);
-            fetch('/posts/'+id+'/like', {
+            var response = await fetch('/posts/'+id+'/like', {
                 method: method,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Accept': 'application/json'
                 }
-            }).then((response)=>{
-                window.location = window.location.href;
             });
+            handleResponse(response, true);
         }
     </script>
 {% endblock %}
@@ -21,7 +20,14 @@
         {% for key, value in result %}
             <tr>
                 <td>{{key}}</td>
-                <td>{{value}}</td>
+                <td>{% if key == 'media' %}
+                    {% for i, file in value %}
+                        <img src="/{{file.path}}/{{file.name}}" width="400px">
+                    {% endfor %}
+                    {% else %}
+                    {{value}}
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </table>

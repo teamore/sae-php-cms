@@ -12,6 +12,7 @@ CREATE TABLE `posts` (
   `title` varchar(255) NOT NULL,
   `author` varchar(255) NOT NULL,
   `content` text NOT NULL,
+  `media` json DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -20,9 +21,9 @@ CREATE TABLE `posts` (
 -- Daten für Tabelle `posts`
 --
 
-INSERT INTO `posts` (`id`, `user`, `title`, `author`, `content`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Testeinträgchen', '', 'Lorem Ipsum', '2024-01-31 18:26:32', '2024-01-31 20:21:34'),
-(3, 2, 'Mein toller neuer Beitrag', '', 'Mit hochinteressantem Inhalt', '2024-01-31 18:44:17', '2024-01-31 18:44:17');
+INSERT INTO `posts` (`id`, `user`, `title`, `author`, `content`, `media`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Testeinträgleinchen', '', 'Lorem Ipsum', '[{\"name\": \"51330626636_f7a2291481_o.jpg\", \"path\": \"assets/uploads/posts/1/\", \"size\": 3838362, \"original\": \"51330626636_f7a2291481_o.jpg\"}]', '2024-01-31 18:26:32', '2024-02-06 20:22:40'),
+(2, 2, 'Mein toller neuer Beitrag', '', 'Mit hochinteressantem Inhalt', NULL, '2024-01-31 18:44:17', '2024-01-31 18:44:17');
 
 -- --------------------------------------------------------
 
@@ -42,9 +43,9 @@ CREATE TABLE `post_likes` (
 --
 
 INSERT INTO `post_likes` (`id`, `user`, `post`, `created_at`) VALUES
-(1, 1, 3, '2024-02-01 19:37:04'),
-(2, 2, 3, '2024-02-01 20:30:59'),
-(3, 2, 1, '2024-02-01 20:31:01');
+(1, 2, 3, '2024-02-01 21:43:10'),
+(2, 2, 1, '2024-02-01 21:43:20'),
+(3, 1, 3, '2024-02-06 18:43:13');
 
 -- --------------------------------------------------------
 
@@ -68,7 +69,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `created_at`, `updated_at`) VALUES
 (1, 'testuser1', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-01-31 18:25:41', '2024-01-31 18:25:41'),
 (2, 'testuser2', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-01-31 18:43:45', '2024-01-31 18:43:45'),
-(3, 'testuser2', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-02-01 19:52:35', '2024-02-01 19:52:35');
+(3, 'testuser3', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-02-06 11:09:46', '2024-02-06 11:09:46');
 
 --
 -- Indizes der exportierten Tabellen
@@ -104,13 +105,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT für Tabelle `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT für Tabelle `post_likes`
 --
 ALTER TABLE `post_likes`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT für Tabelle `users`
