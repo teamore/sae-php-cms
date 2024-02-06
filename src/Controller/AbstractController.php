@@ -1,11 +1,12 @@
 <?
 namespace App\Controller;
 class AbstractController {
-    protected $loader;
-    protected $twig;
-    protected $messages = [];
-    protected $query = null;
-    protected $requestBody = null;
+    protected \Twig\Loader\FilesystemLoader $loader;
+    protected \Twig\Environment $twig;
+    protected Array $messages = [];
+    protected ?Array $query = null;
+    protected String $view = '';
+    protected ?Array $requestBody = null;
     public function __construct($query = null) {
         $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/../../templates');
         $this->twig = new \Twig\Environment($this->loader);    
@@ -29,8 +30,12 @@ class AbstractController {
     public function getUser():Object|null {
         return $_SESSION['user'] ?? null;
     }
-    public function getUserId():int|null {
-        return ($this->getUser() ? $this->getUser()->id : null);
+    public function getUserId($authenticationRequired = false):int|null {
+        $uid = ($this->getUser() ? $this->getUser()->id : null);
+        if (!$uid && $authenticationRequired) {
+            throw new \Exception("This resource is only available for authenticated users", 401);
+        }
+        return $uid;
     }
     public function display($template, $payload = []) {
         $payload['user'] = $payload['user'] ?? $this->getUser() ?? null;
