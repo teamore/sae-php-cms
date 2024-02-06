@@ -10,7 +10,7 @@ class DefaultController extends AbstractController
     {
         # retrieve results
         $results = $this->getDbConnection()->query("SELECT * FROM `posts`;")->fetchAll(\PDO::FETCH_ASSOC);
-        $this->display('index.html', ['results' => $results]);
+        $this->setView('index.html', ['results' => $results]);
     }
 
     public function postShow() {
@@ -42,7 +42,7 @@ class DefaultController extends AbstractController
             $result['ilike'] = ($result2 !== false);
         }            
         # call view
-        $this->display('post.html', ['result' => $result]);
+        $this->setView('post.html', ['result' => $result]);
     }
 
     public function postEdit() {
@@ -58,7 +58,7 @@ class DefaultController extends AbstractController
                 throw new \Exception('This Post does not exist', 404);
             }
         }
-        $this->display('post_update.html', ['result' => $result ?? []]);        
+        $this->setView('post_update.html', ['result' => $result ?? []]);        
     }
     public function postSave() {
         $data = $_REQUEST;
@@ -104,20 +104,14 @@ class DefaultController extends AbstractController
     }
     public function postKill() {
         $id = $this->query['post_id'];
-        $uid = $this->getUserId();
-        if (!$uid) {
-            throw new \Exception("This resource is only available for authenticated users", 401);
-        }
+        $uid = $this->getUserId(true);
         $result = $this->getDbConnection()->exec("DELETE FROM `posts` WHERE `id`='$id' AND `user`='$uid' LIMIT 1;");
         return $this->index();
     }
 
     public function postLikeSave() {
         $postId = $this->query['post_id'];
-        $uid = $this->getUserId();
-        if (!$uid) {
-            throw new \Exception("This resource is only available for authenticated users", 401);
-        }
+        $uid = $this->getUserId(true);
 
         try {
             $result = $this->getDbConnection()->exec("INSERT INTO `post_likes` 
@@ -132,10 +126,7 @@ class DefaultController extends AbstractController
 
     public function postLikeDelete() {
         $postId = $this->query['post_id'];
-        $uid = $this->getUserId();
-        if (!$uid) {
-            throw new \Exception("This resource is only available for authenticated users", 401);
-        }
+        $uid = $this->getUserId(true);
 
         try {
             $result = $this->getDbConnection()->exec("DELETE FROM `post_likes` WHERE `post`=$postId AND `user`=$uid;");

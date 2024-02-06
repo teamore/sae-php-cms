@@ -69,8 +69,11 @@ class Router {
             try {
                 /* call the specified action */
                 $result = $controller->$actionName();
+                if ($controller->getView()) {
+                    $controller->display();
+                }
             } catch (\Exception $exception) {
-                $controller->addMessage($exception->getMessage());
+                $controller->addMessage($exception);
                 http_response_code($exception->getCode());
                 $controller->display('error.html');
                 die();

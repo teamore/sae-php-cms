@@ -3,10 +3,10 @@ namespace App\Controller;
 use App\Controller\AbstractController;
 class UserController extends AbstractController {
     public function showLogin() {
-        $this->display("login.html");
+        $this->setView("login.html");
     }
     public function showSignup() {
-        $this->display("signup.html");
+        $this->setView("signup.html");
     }
     public function doLogin(): object|bool {
         $user = $this->getDbConnection()->query("
@@ -92,8 +92,7 @@ class UserController extends AbstractController {
             foreach ($errors as $key => $error) {
                 $this->addMessage($key." is not correct.");
             }
-            $this->display('signup.html',['signup' => $data]);
-            die();
+            $this->setView('signup.html',['signup' => $data]);
         }
     }
 }
