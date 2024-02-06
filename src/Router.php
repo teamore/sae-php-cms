@@ -26,6 +26,7 @@ class Router {
         $requestMethod = $method ?? $_SERVER['REQUEST_METHOD'];
         $requestPath = $requestUri['path'];
         parse_str($requestUri['query'] ?? '', $requestQuery);
+        $headers = getallheaders();
 
         /* iterate trough defined routes */
         foreach($this->routing as $route => $config) {
@@ -66,18 +67,23 @@ class Router {
             $controller->setQuery($requestQuery);
             $actionName = $config['action'] ?? 'index';
             $exception = null;
+            $result = null;
             try {
                 /* call the specified action */
                 $result = $controller->$actionName();
-                if ($controller->getView()) {
-                    $controller->display();
-                }
             } catch (\Exception $exception) {
-                $controller->addMessage($exception);
+                $controller->addMessage(["code"=>$exception->getCode(), "message"=>$exception->getMessage()]);
                 http_response_code($exception->getCode());
-                $controller->display('error.html');
+                $controller->setView('error.html');
+            }
+            if ($controller->getView() && in_array('text/html', explode(",",$headers['Accept']))) {
+                $controller->display();
+            } else if (in_array('application/json', explode(",",$headers['Accept']))) {
+                header('Content-Type: application/json');
+                echo json_encode(["payload" => $controller->getPayload(), "result" => $result, "messages" => $controller->getMessages()]);
                 die();
             }
+
             /* redirect to another route if specified while keeping current message stack */
             if (($config['redirect'] ?? '')) {
                 if (is_array($config['redirect']) && $config['redirect'][$result] ?? '') {
