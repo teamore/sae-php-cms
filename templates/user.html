@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{result.title}}{% endblock %}
+{% block content %}
+    <table>
+        {% for key, value in result %}
+            <tr>
+                <td>{{key}}</td>
+                <td>{% if key == 'media' %} 
+                    {% for i, file in value %}
+                        <img src="/media/users/{result.id}" width="400px">
+                    {% endfor %}
+                    {% else %}
+                        {{value}}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

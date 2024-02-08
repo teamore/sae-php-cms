@@ -8,6 +8,14 @@ class UserController extends AbstractController {
     public function showSignup() {
         $this->setView("signup.html");
     }
+    public function userShow() {
+        $uid = $this->query['user_id'];
+        $result = $this->getDbConnection()->query("SELECT * FROM `users` WHERE `id`='$uid';")->fetch(\PDO::FETCH_ASSOC);
+        $this->setView("user.html", ["result" => $result]);
+    }
+    public function edit() {
+        $this->setView("user_edit.html");
+    }
     public function doLogin(): object|bool {
         $user = $this->getDbConnection()->query("
             SELECT * FROM `users` WHERE 
@@ -64,29 +72,43 @@ class UserController extends AbstractController {
         $requirements = 
             [
                 'email' => ['regex' => '/^\S+@\S+\.\S+$/'],
-                'username' => ['min' =>3, 'max' => 80],
-                'password' => ['min' =>5, 'max' => 80]
+                'username' => ['min' =>3, 'max' => 80]
             ];
+        
+        $uid = $this->getUserId();
+        if (!$uid) {
+            $requirements['password'] = ['min' =>5, 'max' => 80];
+        }
         
         $errors = $this->validateDataset($data, $requirements);
         if (sizeof($errors) === 0)
             {
-                $data['password'] = hash('sha256', $data['password']);
-                $sql = "INSERT INTO `users` (
-                    `username`, 
-                    `email`,
-                    `password`,
-                    `created_at`,
-                    `updated_at`
-                    ) VALUES (
-                        '$data[username]',
-                        '$data[email]',
-                        '$data[password]',
-                        '".date('Y-m-d H:i:s')."',
-                        '".date('Y-m-d H:i:s')."'
-        
-                    );";
-                return $this->getDbConnection()->exec($sql);
+                if ($uid) {
+                    $sql = "UPDATE `users` SET 
+                        `username`='$data[username]', 
+                        `email`='$data[email]',
+                        `updated_at`='".date('Y-m-d H:i:s')."'
+                        WHERE `id`='$uid';";
+                    $this->getDbConnection()->exec($sql);
+                } else {
+                    $data['password'] = hash('sha256', $data['password']);
+                    $sql = "INSERT INTO `users` (
+                        `username`, 
+                        `email`,
+                        `password`,
+                        `created_at`,
+                        `updated_at`
+                        ) VALUES (
+                            '$data[username]',
+                            '$data[email]',
+                            '$data[password]',
+                            '".date('Y-m-d H:i:s')."',
+                            '".date('Y-m-d H:i:s')."'
+            
+                        );";
+                    $this->getDbConnection()->exec($sql);    
+                }
+                return true;
         } else {
             $this->addMessage("Please correct the given user information.");
             foreach ($errors as $key => $error) {
