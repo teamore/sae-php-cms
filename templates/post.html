@@ -22,7 +22,7 @@
                 <td>{{key}}</td>
                 <td>{% if key == 'media' %}
                     {% for i, file in value %}
-                        <img src="/assets/uploads/{{file.path}}" width="400px">
+                        <img src="/media/posts/{{result.id}}" width="400px">
                     {% endfor %}
                     {% else %}
                     {{value}}
