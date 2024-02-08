@@ -28,6 +28,8 @@ class Router {
         parse_str($requestUri['query'] ?? '', $requestQuery);
         $headers = getallheaders();
 
+        $routeMatches = 0;
+
         /* iterate trough defined routes */
         foreach($this->routing as $route => $config) {
             /* create a list of request methods */
@@ -58,7 +60,8 @@ class Router {
                 }
             }
 
-                
+            $routeMatches ++;
+
             /* Instantiate Controller specified in the route */
             $controllerClassName = "\App\Controller\\".($config['controller'] ?? 'DefaultController');
             $controller = new $controllerClassName();
@@ -92,6 +95,11 @@ class Router {
                     $this->run($config['redirect'], 'GET', $controller->getMessages());
                 }
             }
+        }
+        if (!$routeMatches) {
+            $controller = new \App\Controller\DefaultController();
+            $controller->addMessage(['code'=>404,'message'=>"The requested Resource was not found."]); 
+            $controller->display("error.html");
         }
     }
 }
