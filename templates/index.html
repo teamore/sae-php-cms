@@ -5,12 +5,15 @@
         async function sendDeleteRequest(id, title = '') {
             if (confirm('Are you sure you want to delete '+(title?'"'+title+'"':'the post')+' (id #'+id+')?')) {
                 console.log("delete request for id "+id);
-                fetch('/posts/'+id, {
+                await fetch('/posts/'+id, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                }).then(()=>{window.location = '/';});
+                }).then((response)=>{
+                    console.log(response.text());
+                    window.location = '/';
+                });
             }
         }
         function showPost(id, append = '') {
@@ -23,6 +26,7 @@
         <tr>
             <th>Title</th>
             <th>Author</th>
+            <th>Image</th>
             <th>Date</th>
             <th>Action</th>
         </tr>
@@ -30,6 +34,7 @@
             <tr>
                 <td onclick="showPost({{result.id}})">{{result.title}}</td>
                 <td onclick="showPost({{result.id}})">{{result.author}}</td>
+                <td onclick="showPost({{result.id}})"><img src="/assets/uploads/{{result.media.0.thumb}}" width="100px"></td>
                 <td onclick="showPost({{result.id}})">{{result.created_at}}</td>
                 <td>
                     <button onclick="showPost({{result.id}})">show</button>
