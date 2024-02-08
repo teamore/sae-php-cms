@@ -8,7 +8,10 @@ class DefaultController extends AbstractController
     public function index()
     {
         # retrieve results
-        $results = $this->getDbConnection()->query("SELECT * FROM `posts`;")->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $this->getDbConnection()->query("
+            SELECT p.*, u.username FROM `posts` p 
+            LEFT JOIN `users` u ON u.`id`=p.`user`;")
+            ->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($results as &$result) {
             $result['media'] = !empty($result['media']) ? json_decode($result['media']) : null;
         }
@@ -37,7 +40,7 @@ class DefaultController extends AbstractController
         if (!$result) {
             throw new \Exception("This Resource does not exist", 404);
         }
-        $result['media'] = json_decode($result['media']);   
+        $result['media'] = $result['media'] ? json_decode($result['media']) : '';   
         if ($uid) {
             $result2 = $this->getDbConnection()->query("
             SELECT `id` FROM `post_likes` WHERE `post`='$id' AND `user`='$uid';
