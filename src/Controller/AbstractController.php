@@ -8,6 +8,10 @@ class AbstractController {
     protected ?String $view = null;
     protected ?Array $requestBody = null;
     protected Object|Array|null $payload = null;
+    protected String $appRoot = '/var/www/html/public/';
+    protected String $uploadPath = '/var/www/html/public/assets/uploads/';
+    protected String $uploadPublicPath = '/assets/uploads/';
+
     public function __construct($query = null) {
         $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/../../templates');
         $this->twig = new \Twig\Environment($this->loader, ['debug' => true]);    

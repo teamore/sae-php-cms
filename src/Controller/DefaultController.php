@@ -5,9 +5,6 @@ namespace App\Controller;
 
 class DefaultController extends AbstractController
 {
-    protected String $appRoot = '/var/www/html/public/';
-    protected String $uploadPath = '/var/www/html/public/assets/uploads/';
-    protected String $uploadPublicPath = '/assets/uploads/';
     public function index()
     {
         # retrieve results
@@ -164,6 +161,10 @@ class DefaultController extends AbstractController
         return substr($uniqueName, strlen($path));
     }
     public function generateImage(String $source, String $targetFilename, int $width, int $height, int $quality = 75) {
+        $exif = exif_imagetype($source);
+        if ($exif === false) {
+            return null;
+        }
         $targetImage = imagecreatetruecolor($width, $height);
         $sourceImage = imagecreatefromjpeg($source);
         list($w, $h) = getimagesize($source);
