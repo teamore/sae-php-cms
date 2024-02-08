@@ -5,9 +5,10 @@ WORKDIR /var/www/html
 
 # Install any dependencies your application needs
 RUN apt-get update && \
-    apt-get install -y libpq-dev libyaml-dev zip unzip nano && \
+    apt-get install -y libpng-dev libpq-dev libyaml-dev zip unzip nano libfreetype6-dev libjpeg62-turbo-dev libpng-dev && \
     pecl install yaml && \
-    docker-php-ext-install pdo pdo_mysql && \
+    docker-php-ext-configure gd --with-jpeg --with-freetype && \
+    docker-php-ext-install pdo pdo_mysql gd && \
     docker-php-ext-enable yaml
 
 RUN a2enmod rewrite
