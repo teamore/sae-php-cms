@@ -2,6 +2,7 @@
   method: GET
   alias: 
     - index
+    - posts
   controller: PostController # default: DefaultController
   action: index # default: index
 
