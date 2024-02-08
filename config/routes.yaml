@@ -2,7 +2,7 @@
   method: GET
   alias: 
     - index
-  controller: DefaultController # default: DefaultController
+  controller: PostController # default: DefaultController
   action: index # default: index
 
 /showLogin:
@@ -48,28 +48,33 @@
   match: '#^/posts/([0-9]+)$#'
   match_params:
     1: post_id
-  action: postShow
+  controller: PostController
+  action: one
 
 /editPost:
   match: '#^/posts/edit/([0-9]*)$#'
   match_params:
     1: post_id
-  action: postEdit
+  controller: PostController
+  action: edit
 
 /newPost:
   match: '#^/posts/edit/?$#'
-  action: postEdit
+  controller: PostController
+  action: edit
 
 /savePost:
   method: POST
   alias: posts
-  action: postSave
+  controller: PostController
+  action: save
   redirect: /
 
 /killPost:
   match: '#^/posts/([0-9]+)$#'
   method: DELETE
-  action: postKill
+  controller: PostController
+  action: delete
   redirect: /
 
 /likePost:
@@ -77,14 +82,16 @@
   match_params:
     1: post_id
   method: PUT
-  action: postLikeSave
+  controller: PostController
+  action: like
 
 /unlikePost:
   match: '#^/posts/([0-9]+)/like$#'
   match_params:
     1: post_id
   method: DELETE
-  action: postLikeDelete
+  controller: PostController
+  action: unlike
 
 /showMedia:
   alias: media
