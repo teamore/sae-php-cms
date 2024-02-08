@@ -49,6 +49,14 @@
                     <button onclick="location.href='/login';">login</button>
                     <button onclick="location.href='/signup';">signup</button>
                 {% endif %}
+                <form action="/search" method="GET">
+                    <input type="text" 
+                        name="searchterm" 
+                        placeholder="Search..." 
+                        value="{{searchterm}}"
+                        />
+                    <input type="submit" />
+                </form>
             {% endblock %}
         </div>
         <div id="content">

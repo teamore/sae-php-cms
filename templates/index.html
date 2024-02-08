@@ -16,41 +16,50 @@
                 });
             }
         }
-        function showPost(id, append = '') {
-            location.href='/posts/'+id+(append ? "/" + append : '');
+        function showEntry(id, type = '') {
+            if (!type) {
+                type = 'posts';
+            }
+            location.href="/"+type+"/"+id;
         }
     </script>
 {% endblock %}
 {% block content %}
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Image</th>
-            <th>Date</th>
-            <th>Action</th>
-        </tr>
-        {% for result in results %}
+    {% if results|length >= 1 %}
+        <table>
             <tr>
-                <td onclick="showPost({{result.id}})">{{result.title}}</td>
-                <td onclick="showPost({{result.id}})">{{result.author}}</td>
-                <td onclick="showPost({{result.id}})"><img src="/assets/uploads/{{result.media.0.thumb}}" width="100px"></td>
-                <td onclick="showPost({{result.id}})">{{result.created_at}}</td>
-                <td>
-                    <button onclick="showPost({{result.id}})">show</button>
-                    {% if (user and user.id == result.user) %}
-                        <button onclick="showPost('edit/{{result.id}}')">edit</button>
-                        <button onclick="sendDeleteRequest({{result.id}},'{{result.title}}');">kill</button>
-                    {% endif %}
+                <th>Title</th>
+                <th>Author</th>
+                <th>Image</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+            {% for result in results %}
+                <tr>
+                    <td>{{result.title}}</td>
+                    <td>{{result.username}}</td>
+                    <td>
+                        {% if result.media %}
+                        <img src="/media/{{result.type | default('posts')}}/{{result.id}}" width="100px">
+                        {% endif %}
+                    </td>
+                    <td>{{result.created_at}}</td>
+                    <td>
+                        <button onclick="showEntry({{result.id}}, '{{result.type}}')">show</button>
+                        {% if (user and user.id == result.user) %}
+                            <button onclick="showEntry('edit/{{result.id}}')">edit</button>
+                            <button onclick="sendDeleteRequest({{result.id}},'{{result.title}}');">kill</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="100%" onclick="location.href='/posts/edit';">
+                    <button onclick="location.href='/posts/edit';">add</button>
                 </td>
             </tr>
-        {% endfor %}
-        <tr>
-            <td colspan="100%" onclick="location.href='/posts/edit';">
-                <button onclick="location.href='/posts/edit';">add</button>
-            </td>
-        </tr>
-    </table>
+        </table>
+    {% endif %}
 {% endblock %}
 {% block appendix %}
     <button onclick="location.href='/';">back</button>
