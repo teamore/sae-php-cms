@@ -8,7 +8,7 @@ class DefaultController extends AbstractController
     public function index()
     {
         # retrieve results
-        $results = $this->getDbConnection()->query("
+        $results = $this->db()->query("
             SELECT p.*, u.username FROM `posts` p 
             LEFT JOIN `users` u ON u.`id`=p.`user`;")
             ->fetchAll(\PDO::FETCH_ASSOC);
@@ -23,7 +23,7 @@ class DefaultController extends AbstractController
         $uid = $this->getUserId();
 
         # retrieve results
-        $result = $this->getDbConnection()->query("
+        $result = $this->db()->query("
             SELECT p.*, u.`username`, u.`email`, COUNT(l.`id`) AS `likes` FROM `posts` p 
             LEFT JOIN
                 `users` u
@@ -42,7 +42,7 @@ class DefaultController extends AbstractController
         }
         $result['media'] = $result['media'] ? json_decode($result['media']) : '';   
         if ($uid) {
-            $result2 = $this->getDbConnection()->query("
+            $result2 = $this->db()->query("
             SELECT `id` FROM `post_likes` WHERE `post`='$id' AND `user`='$uid';
             ")->fetch(\PDO::FETCH_ASSOC);
             $result['ilike'] = ($result2 !== false);
@@ -55,7 +55,7 @@ class DefaultController extends AbstractController
         $id = $this->query['post_id'] ?? 0;
         if ($id) {
             # retrieve results
-            $result = $this->getDbConnection()->query("SELECT * FROM `posts` WHERE `id`='$id';")->fetch(\PDO::FETCH_ASSOC);
+            $result = $this->db()->query("SELECT * FROM `posts` WHERE `id`='$id';")->fetch(\PDO::FETCH_ASSOC);
             if ($result) {
                 if ($result['user'] !== $this->getUserId()) {
                     throw new \Exception('Users are not allowed to edit foreign Posts', 403);
@@ -78,7 +78,7 @@ class DefaultController extends AbstractController
             if (!is_numeric($data['id'])) {
                 return;
             }
-            $result = $this->getDbConnection()->query("
+            $result = $this->db()->query("
                 UPDATE `posts` SET 
                 `title`='$data[title]',
                 `author`='$data[author]',
@@ -106,7 +106,7 @@ class DefaultController extends AbstractController
                     '".date('Y-m-d H:i:s')."'
 
                 );";
-            $conn = $this->getDbConnection();
+            $conn = $this->db();
             $result = $conn->query($sql); 
             $data['id'] = $conn->lastInsertId();
         }
@@ -115,7 +115,7 @@ class DefaultController extends AbstractController
         # Store media array as JSON
         if (count($media) > 0) {
             $sql = "UPDATE `posts` SET `media`='".json_encode($media)."' WHERE `id`='$data[id]'";
-            $this->getDbConnection()->exec($sql);    
+            $this->db()->exec($sql);    
         }
         return $result;
     }
@@ -179,13 +179,13 @@ class DefaultController extends AbstractController
     public function postKill() {
         $id = $this->query['post_id'];
         $uid = $this->getUserId(true);
-        $media = $this->getDbConnection()->query("SELECT `media` FROM `posts` WHERE `id`='$id';")->fetchColumn();
+        $media = $this->db()->query("SELECT `media` FROM `posts` WHERE `id`='$id';")->fetchColumn();
         $media = json_decode($media, true);
         foreach($media as $file) {
             unlink("/var/www/html/public/".$file['path'].$file['name']);
             unlink("/var/www/html/public/".$file['thumb']);
         }
-        $result = $this->getDbConnection()->exec("DELETE FROM `posts` WHERE `id`='$id' AND `user`='$uid' LIMIT 1;");
+        $result = $this->db()->exec("DELETE FROM `posts` WHERE `id`='$id' AND `user`='$uid' LIMIT 1;");
         return $this->index();
     }
 
@@ -194,11 +194,11 @@ class DefaultController extends AbstractController
         $uid = $this->getUserId(true);
 
         try {
-            $result = $this->getDbConnection()->query("SELECT `user` FROM `posts` WHERE `id`='$postId'")->fetchColumn();
+            $result = $this->db()->query("SELECT `user` FROM `posts` WHERE `id`='$postId'")->fetchColumn();
             if ($uid === $result) {
                 throw new \Exception('Users must not like their own posts.', 400);
             }
-            $result = $this->getDbConnection()->exec("INSERT INTO `post_likes` 
+            $result = $this->db()->exec("INSERT INTO `post_likes` 
             (`post`,`user`,`created_at`) VALUES 
             ('$postId', '$uid', '".date('Y-m-d H:i:s')."');
             ");            
@@ -213,7 +213,7 @@ class DefaultController extends AbstractController
         $uid = $this->getUserId(true);
 
         try {
-            $result = $this->getDbConnection()->exec("DELETE FROM `post_likes` WHERE `post`=$postId AND `user`=$uid;");
+            $result = $this->db()->exec("DELETE FROM `post_likes` WHERE `post`=$postId AND `user`=$uid;");
         } catch (\PDOException $e) {
             throw new \Exception($e->getMessage(),500);
         }

@@ -1,5 +1,6 @@
 <?
 namespace App\Controller;
+use App\Database;
 class AbstractController {
     protected \Twig\Loader\FilesystemLoader $loader;
     protected \Twig\Environment $twig;
@@ -76,17 +77,9 @@ class AbstractController {
         }
         $this->twig->display($view, $this->getPayload());
     }
-    public function getDbConnection() {
-        # database connection parameters
-        $host = getenv('MYSQL_HOST') ?: 'sae-php-cms-mysql';
-        $database = getenv('MYSQL_DATABASE');
-        $username = getenv('MYSQL_USER');
-        $password = getenv('MYSQL_PASSWORD');
-
-        # establish database connection
+    public function db() {
         try {
-            $pdo = new \PDO("mysql:host=$host;dbname=$database", $username, $password);
-            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $pdo = Database::connect();
         } catch (\PDOException $e) {
             $this->addMessage("Connection failed: " . $e->getMessage());
         }

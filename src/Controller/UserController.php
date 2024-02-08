@@ -10,14 +10,14 @@ class UserController extends AbstractController {
     }
     public function userShow() {
         $uid = $this->query['user_id'];
-        $result = $this->getDbConnection()->query("SELECT * FROM `users` WHERE `id`='$uid';")->fetch(\PDO::FETCH_ASSOC);
+        $result = $this->db()->query("SELECT * FROM `users` WHERE `id`='$uid';")->fetch(\PDO::FETCH_ASSOC);
         $this->setView("user.html", ["result" => $result]);
     }
     public function edit() {
         $this->setView("user_edit.html");
     }
     public function doLogin(): object|bool {
-        $user = $this->getDbConnection()->query("
+        $user = $this->db()->query("
             SELECT * FROM `users` WHERE 
             `username`='$_POST[username]' AND 
             `password`='".hash('sha256', $_POST['password'])."';
@@ -89,7 +89,7 @@ class UserController extends AbstractController {
                         `email`='$data[email]',
                         `updated_at`='".date('Y-m-d H:i:s')."'
                         WHERE `id`='$uid';";
-                    $this->getDbConnection()->exec($sql);
+                    $this->db()->exec($sql);
                 } else {
                     $data['password'] = hash('sha256', $data['password']);
                     $sql = "INSERT INTO `users` (
@@ -106,7 +106,7 @@ class UserController extends AbstractController {
                             '".date('Y-m-d H:i:s')."'
             
                         );";
-                    $this->getDbConnection()->exec($sql);    
+                    $this->db()->exec($sql);    
                 }
                 return true;
         } else {
