@@ -43,8 +43,9 @@
         <div id="header">
             {% block header %}
                 {% if user %}
-                    <button onclick="location.href='/logout';">logout</button>
                     <strong>{{user.username}}</strong>
+                    <button onclick="location.href='/me';">profile</button>
+                    <button onclick="location.href='/logout';">logout</button>
                 {% else %}
                     <button onclick="location.href='/login';">login</button>
                     <button onclick="location.href='/signup';">signup</button>
