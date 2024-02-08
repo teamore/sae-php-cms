@@ -17,18 +17,24 @@
     {% endif %}
 {% endblock %}
 {% block content %}
-    <form action="/signup" method="POST">
+    <form action="/signup" method="POST" enctype="multipart/form-data">
         <div>
             <label for="email">Email</label>
-            <input type="text" name="email" value="{{signup.email}}">
+            <input type="text" name="email" value="{{user.email | default('signup.email')}}">
         </div>
         <div>
             <label for="username">Username</label>
-            <input type="text" name="username" value="{{signup.username}}">
+            <input type="text" name="username" value="{{user.username | default('signup.username')}}">
         </div>
+        {% if not user %}
+            <div>
+                <label for="password">Password</label>
+                <input type="password" name="password">
+            </div>
+        {% endif %}
         <div>
-            <label for="password">Password</label>
-            <input type="password" name="password">
+            <label for="media">Profile Image</label>
+            <input type="file" name="media" />
         </div>
         <div><input type="submit" value="signup"></div>
         <input type="hidden" name="model" value="User">

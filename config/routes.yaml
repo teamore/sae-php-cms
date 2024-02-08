@@ -36,6 +36,14 @@
     1: /
     409: /signup
 
+/showUser:
+  match: '#^/users/([0-9]+)$#'
+  alias: users
+  match_params:
+    1: user_id
+  controller: UserController
+  action: userShow
+
 /showPost:
   match: '#^/posts/([0-9]+)$#'
   match_params:
@@ -77,3 +85,21 @@
     1: post_id
   method: DELETE
   action: postLikeDelete
+
+/showMedia:
+  alias: media
+  match: '#^/media/posts/([0-9]+)/?([0-9]*)$#'
+  match_params:
+    1: post_id
+    2: media_id
+  method: GET
+  controller: MediaController
+  action: show
+
+/search:
+  controller: SearchController
+
+/me:
+  alias: /me/edit
+  controller: UserController
+  action: edit
