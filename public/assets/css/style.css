@@ -102,3 +102,20 @@ button:hover, input[type=submit]:hover {
     color: #fff;
     border: 1px solid transparent;
 }
+div.pagination a {
+    border: 1px solid #4a6;
+    text-decoration: none;
+    background-color: #fff;
+    color: #4a6;
+    padding: 0.1em 0.2em;
+    border-radius: 0.2em;   
+}
+div.pagination a.disabled {
+    border: 1px solid #aaa;
+    background-color: #ddd;
+    color: #fff;
+}
+div.pagination a:hover:not(.disabled), div.pagination a.active {
+    background-color: #4a6;
+    color: #fff;
+}

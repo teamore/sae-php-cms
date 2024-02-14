@@ -26,10 +26,23 @@
 {% endblock %}
 {% block content %}
     {% if results|length >= 1 %}
+        <div class="pagination">
+            <a href="/posts?page={{currentPage - 1}}&per_page={{perPage}}&filter[category]={{filter.category}}" class="{% if currentPage < 2 %}disabled{% endif %}">&lt;</a>
+            {% for i in 1..pagesAmount %}
+                <a href="/posts?page={{i}}&per_page={{perPage}}&filter[category]={{filter.category}}" class="{% if i == currentPage %}active{% endif %}">{{i}}</a>
+            {% endfor %}
+            <a href="/posts?page={{currentPage + 1}}&per_page={{perPage}}&filter[category]={{filter.category}}" class="{% if currentPage >= pagesAmount %}disabled{% endif %}">></a>
+            Filter: Category 
+            <a href="/posts?filter[category]=A">A</a>
+            <a href="/posts?filter[category]=B">B</a>
+            <a href="/posts?filter[category]=">reset</a>
+        </div>
+
         <table>
             <tr>
                 <th>Title</th>
                 <th>Author</th>
+                <th>Category</th>
                 <th>Image</th>
                 <th>Date</th>
                 <th>Action</th>
@@ -38,6 +51,7 @@
                 <tr>
                     <td>{{result.title}}</td>
                     <td>{{result.username}}</td>
+                    <td>{{result.category}}</td>
                     <td>
                         {% if result.media %}
                         <img src="/media/{{result.type | default('posts')}}/{{result.id}}" width="100px">

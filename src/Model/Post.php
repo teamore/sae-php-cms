@@ -12,12 +12,18 @@ class Post extends AbstractModel {
     protected $author;
     protected static $table = 'posts';
 
-    public static function all() {
+    public static function all(?array $criteria = null, ?int $limit = null, ?int $offset = null) {
+         $sql = "
+            SELECT p.*, u.username FROM `".self::getTable()."` p 
+            LEFT JOIN `".User::getTable()."` u ON u.`id`=p.`user`
+            ". static::where($criteria)
+            . (isset($limit) ? "LIMIT $limit " : "") 
+            . (isset($offset) ? "OFFSET $offset " : "") . "
+         ;";
          # retrieve results
-         $results = Database::connect()->query("
-            SELECT p.*, u.username FROM `posts` p 
-            LEFT JOIN `users` u ON u.`id`=p.`user`;")
-         ->fetchAll(\PDO::FETCH_ASSOC);
+         $results = Database::connect()->query($sql)
+             ->fetchAll(\PDO::FETCH_ASSOC);
+        
         foreach ($results as &$result) {
             $result['media'] = !empty($result['media']) ? json_decode($result['media']) : null;
         }
@@ -27,9 +33,9 @@ class Post extends AbstractModel {
     public static function find($id) {
         # retrieve results
         return Database::connect()->query("
-            SELECT p.*, u.`username`, u.`email`, COUNT(l.`id`) AS `likes` FROM `posts` p 
+            SELECT p.*, u.`username`, u.`email`, COUNT(l.`id`) AS `likes` FROM `".self::getTable()."` p 
             LEFT JOIN
-                `users` u
+                `".User::getTable()."` u
             ON p.`user` = u.`id`
             LEFT JOIN
                 `post_likes` l
@@ -41,7 +47,7 @@ class Post extends AbstractModel {
     }
     public static function update($data) {
         return Database::connect()->query("
-            UPDATE `posts` SET 
+            UPDATE `".self::$table."` SET 
             `title`='$data[title]',
             `author`='$data[author]',
             `content`='$data[content]',
@@ -53,7 +59,7 @@ class Post extends AbstractModel {
         ");     
     }
     public static function insert($data) {
-        $sql = "INSERT INTO `posts` (
+        $sql = "INSERT INTO `".self::$table."` (
             `title`, 
             `user`,
             `author`,

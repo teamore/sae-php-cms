@@ -6,8 +6,27 @@ use App\Uploader;
 class PostController extends AbstractController {
     public function index()
     {
-        $results = Post::all();
-        $this->setView('index.html', ['results' => $results]);
+        $filter = array_filter($_REQUEST['filter']) ?? null;
+        $resultsAmount = Post::count($filter);
+        /* 
+        $results = Post::all($_REQUEST['limit'] ?? null, $_REQUEST['offset'] ?? null);
+        */
+        $perPage = $_REQUEST['per_page'] ?? 5;
+        $pagesAmount = ceil($resultsAmount / $perPage);
+        $currentPage = $_REQUEST['page'] ?? 1;
+       
+        # enforce min/max currentPage #
+        $currentPage = $currentPage > $pagesAmount ? $pagesAmount : ($currentPage < 1 ? 1 : $currentPage);
+
+        $results = Post::all($filter, $perPage, (($currentPage) - 1) * ($perPage));
+
+        $this->setView('index.html', [
+            'results' => $results, 
+            'pagesAmount' => $pagesAmount,
+            'currentPage' => $currentPage,
+            'perPage' => $perPage,
+            'filter' => $filter
+        ]);
     }
     public function one($id = null) {
         $id = $id ?? $this->query['post_id'];
