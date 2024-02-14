@@ -6,5 +6,10 @@ RewriteRule (.*) public/$1 [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^.*$ /public/index.php?%{QUERY_STRING} [NC,L]
 
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
 ErrorDocument 404 /error.php?error=404
 ErrorDocument 500 /error.php?error=500
