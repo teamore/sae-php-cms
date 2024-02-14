@@ -6,7 +6,7 @@ use App\Uploader;
 class PostController extends AbstractController {
     public function index()
     {
-        $filter = array_filter($_REQUEST['filter']) ?? null;
+        $filter = isset($_REQUEST['filter']) ? array_filter($_REQUEST['filter']) : null;
         $resultsAmount = Post::count($filter);
         /* 
         $results = Post::all($_REQUEST['limit'] ?? null, $_REQUEST['offset'] ?? null);
