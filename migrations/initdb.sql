@@ -3,12 +3,19 @@ START TRANSACTION;
 SET time_zone = "+00:00";
 
 --
+-- Datenbank: `sae-cms`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `posts`
 --
 
 CREATE TABLE `posts` (
   `id` int UNSIGNED NOT NULL,
   `user` int UNSIGNED NOT NULL,
+  `category` enum('A','B') NOT NULL,
   `title` varchar(255) NOT NULL,
   `author` varchar(255) NOT NULL,
   `content` text NOT NULL,
@@ -21,9 +28,9 @@ CREATE TABLE `posts` (
 -- Daten für Tabelle `posts`
 --
 
-INSERT INTO `posts` (`id`, `user`, `title`, `author`, `content`, `media`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Testeinträgleinchen', '', 'Lorem Ipsum', '[{\"name\": \"51330626636_f7a2291481_o.jpg\", \"path\": \"assets/uploads/posts/1/\", \"size\": 3838362, \"original\": \"51330626636_f7a2291481_o.jpg\"}]', '2024-01-31 18:26:32', '2024-02-06 20:22:40'),
-(2, 2, 'Mein toller neuer Beitrag', '', 'Mit hochinteressantem Inhalt', NULL, '2024-01-31 18:44:17', '2024-01-31 18:44:17');
+INSERT INTO `posts` (`id`, `user`, `category`, `title`, `author`, `content`, `media`, `created_at`, `updated_at`) VALUES
+(1, 1, 'B', 'Testeintrag', '', 'Lorem Ipsum', '[{\"path\": \"posts/1/UXAnsL\", \"size\": 38893, \"type\": \"image/jpeg\", \"thumb\": \"posts/1/t_UXAnsL\", \"original\": \"Timor.jpg\"}]', '2024-01-31 18:26:32', '2024-02-08 22:58:11'),
+(2, 2, 'B', 'Mein toller neuer Beitrag', '', 'Mit hochinteressantem Inhalt', NULL, '2024-01-31 18:44:17', '2024-01-31 18:44:17'),
 
 -- --------------------------------------------------------
 
@@ -43,9 +50,9 @@ CREATE TABLE `post_likes` (
 --
 
 INSERT INTO `post_likes` (`id`, `user`, `post`, `created_at`) VALUES
-(1, 2, 3, '2024-02-01 21:43:10'),
+(1, 2, 2, '2024-02-01 21:43:10'),
 (2, 2, 1, '2024-02-01 21:43:20'),
-(3, 1, 3, '2024-02-06 18:43:13');
+(3, 1, 2, '2024-02-08 23:09:30');
 
 -- --------------------------------------------------------
 
@@ -58,6 +65,7 @@ CREATE TABLE `users` (
   `username` varchar(80) NOT NULL,
   `password` text NOT NULL,
   `email` varchar(320) NOT NULL,
+  `media` json DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -66,10 +74,10 @@ CREATE TABLE `users` (
 -- Daten für Tabelle `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `email`, `created_at`, `updated_at`) VALUES
-(1, 'testuser1', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-01-31 18:25:41', '2024-01-31 18:25:41'),
-(2, 'testuser2', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-01-31 18:43:45', '2024-01-31 18:43:45'),
-(3, 'testuser3', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', '2024-02-06 11:09:46', '2024-02-06 11:09:46');
+INSERT INTO `users` (`id`, `username`, `password`, `email`, `media`, `created_at`, `updated_at`) VALUES
+(1, 'Timor', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', NULL, '2024-01-31 18:25:41', '2024-02-14 22:15:36'),
+(2, 'Ellie', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', NULL, '2024-01-31 18:43:45', '2024-01-31 18:43:45'),
+(3, 'Joel', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', NULL, '2024-02-06 11:09:46', '2024-02-06 11:09:46');
 
 --
 -- Indizes der exportierten Tabellen
@@ -80,7 +88,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `created_at`, `updat
 --
 ALTER TABLE `posts`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_user` (`user`);
+  ADD KEY `fk_user` (`user`),
+  ADD KEY `category` (`category`);
 
 --
 -- Indizes für die Tabelle `post_likes`
