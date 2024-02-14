@@ -30,6 +30,9 @@ class Router {
 
         $routeMatches = 0;
 
+        /* strip trailing slash */
+        $requestPath = (strlen($requestPath) > 1 && substr($requestPath, strlen($requestPath) - 1, 1) === '/') ? substr($requestPath, 0, -1) : $requestPath;
+
         /* iterate trough defined routes */
         foreach($this->routing as $route => $config) {
             /* create a list of request methods */

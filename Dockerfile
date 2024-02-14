@@ -11,6 +11,8 @@ RUN apt-get update && \
     docker-php-ext-install pdo pdo_mysql gd exif && \
     docker-php-ext-enable yaml
 
+COPY ./httpd.conf /etc/apache2/sites-available/000-default.conf
+
 RUN a2enmod rewrite
 RUN service apache2 restart
 
