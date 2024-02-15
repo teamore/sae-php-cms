@@ -17,8 +17,8 @@ class Post extends AbstractModel {
             SELECT p.*, u.username FROM `".self::getTable()."` p 
             LEFT JOIN `".User::getTable()."` u ON u.`id`=p.`user`
             ". static::where($criteria)
-            . (isset($limit) ? "LIMIT $limit " : "") 
-            . (isset($offset) ? "OFFSET $offset " : "") . "
+            . (isset($limit) && $limit > 0 ? "LIMIT $limit " : "") 
+            . (isset($offset) && $offset > 0 ? "OFFSET $offset " : "") . "
          ;";
          # retrieve results
          $results = Database::connect()->query($sql)
