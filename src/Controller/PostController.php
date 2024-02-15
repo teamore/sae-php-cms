@@ -2,29 +2,19 @@
 namespace App\Controller;
 use App\Model\Post;
 use App\Model\PostLike;
+use App\Traits\Paginatable;
 use App\Uploader;
 class PostController extends AbstractController {
+    use Paginatable;
     public function index()
     {
         $filter = isset($_REQUEST['filter']) ? array_filter($_REQUEST['filter']) : null;
-        $resultsAmount = Post::count($filter);
-        /* 
-        $results = Post::all($_REQUEST['limit'] ?? null, $_REQUEST['offset'] ?? null);
-        */
-        $perPage = $_REQUEST['per_page'] ?? 5;
-        $pagesAmount = ceil($resultsAmount / $perPage);
-        $currentPage = $_REQUEST['page'] ?? 1;
-       
-        # enforce min/max currentPage #
-        $currentPage = $currentPage > $pagesAmount ? $pagesAmount : ($currentPage < 1 ? 1 : $currentPage);
+        $this->setPagination(Post::count($filter));
 
-        $results = Post::all($filter, $perPage, (($currentPage) - 1) * ($perPage));
+        $results = Post::all($filter, $this->resultsPerPage, (($this->currentPage) - 1) * ($this->resultsPerPage));
 
         $this->setView('index.html', [
-            'results' => $results, 
-            'pagesAmount' => $pagesAmount,
-            'currentPage' => $currentPage,
-            'perPage' => $perPage,
+            'results' => $results,
             'filter' => $filter
         ]);
     }

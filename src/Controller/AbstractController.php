@@ -23,7 +23,10 @@ class AbstractController {
             $this->view = $view;
         }
         if (isset($payload)) {
-            $this->payload = $payload;
+            $this->payload = array_merge($this->payload ?? [], $payload);
+        }
+        if (in_array("App\\Traits\\Paginatable", class_uses($this) ?? [])) {
+            $this->addPaginatorToPayload($this->payload);        
         }
     }
     public function getView(): ?String {
