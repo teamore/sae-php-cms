@@ -12,6 +12,12 @@
   controller: UserController
   action: showLogin
 
+/ApiSignup:
+  alias: api/signup
+  method: POST
+  controller: UserController
+  action: 
+
 /login:
   method: POST
   controller: UserController
@@ -30,12 +36,21 @@
   action: showSignup
 
 /signup:
+  alias: /api/users
   method: POST
   controller: UserController
   action: doSignup
   redirect: 
     1: /
     409: /signup
+
+/users/me:
+  alias: /api/users/me
+  method: POST
+  controller: UserController
+  action: update
+  redirect:
+    1: /
 
 /showUser:
   match: '#^/users/([0-9]+)$#'

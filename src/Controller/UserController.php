@@ -2,6 +2,12 @@
 namespace App\Controller;
 use App\Controller\AbstractController;
 class UserController extends AbstractController {
+    protected $requirements = 
+    [
+        'email' => ['regex' => '/^\S+@\S+\.\S+$/'],
+        'username' => ['min' =>3, 'max' => 80]
+    ];
+
     public function showLogin() {
         $this->setView("login.html");
     }
@@ -14,7 +20,9 @@ class UserController extends AbstractController {
         $this->setView("user.html", ["result" => $result]);
     }
     public function edit() {
-        $this->setView("user_edit.html");
+        $user = $this->getUser();
+        $user->password = "***";
+        $this->setView("user_edit.html", ["user"=>$user]);
     }
     public function doLogin(): object|bool {
         $user = $this->db()->query("
@@ -66,48 +74,70 @@ class UserController extends AbstractController {
         }
         return $errors;
     }
-
-    public function doSignup($data = null) {
+    public function update($data = null): bool {
         $data = $data ?? $_REQUEST;
-        $requirements = 
-            [
-                'email' => ['regex' => '/^\S+@\S+\.\S+$/'],
-                'username' => ['min' =>3, 'max' => 80]
-            ];
-        
-        $uid = $this->getUserId();
-        if (!$uid) {
-            $requirements['password'] = ['min' =>5, 'max' => 80];
+        $uid = $this->getUserId(true);
+        $errors = $this->validateDataset($data, $this->requirements);
+        if (sizeof($errors) === 0) {
+            $sql = "UPDATE `users` SET 
+                `username`='$data[username]', 
+                `email`='$data[email]',
+                `updated_at`='".date('Y-m-d H:i:s')."'
+                WHERE `id`='$uid';";
+                try {
+                    if ($this->db()->exec($sql)) {
+                        $user = $this->db()->query("SELECT * FROM `users` WHERE `id`='$uid'")->fetchObject();
+                        $_SESSION['user'] = $user;
+                        return true;
+                    }    
+                } catch (\Exception $e) { 
+                    $this->addMessage(["message" => "Username already exists.", "code" => 409]);
+                    $this->setView('signup.html',['signup' => $data]);    
+                    return false;        
+                }
+        } else {
+            $this->addMessage("Please correct the given user information.");
+            foreach ($errors as $key => $error) {
+                $this->addMessage($key." is not correct.");
+            }
+            $this->setView('signup.html',['signup' => $data]);            
         }
-        
+        return false;
+    }
+
+
+    public function doSignup($data = null): bool {
+        $data = $data ?? $_REQUEST;
+        $requirements = $this->requirements;
+        $requirements['password'] = ['min' =>5, 'max' => 80];
+
         $errors = $this->validateDataset($data, $requirements);
+
         if (sizeof($errors) === 0)
             {
-                if ($uid) {
-                    $sql = "UPDATE `users` SET 
-                        `username`='$data[username]', 
-                        `email`='$data[email]',
-                        `updated_at`='".date('Y-m-d H:i:s')."'
-                        WHERE `id`='$uid';";
-                    $this->db()->exec($sql);
-                } else {
-                    $data['password'] = hash('sha256', $data['password']);
-                    $sql = "INSERT INTO `users` (
-                        `username`, 
-                        `email`,
-                        `password`,
-                        `created_at`,
-                        `updated_at`
-                        ) VALUES (
-                            '$data[username]',
-                            '$data[email]',
-                            '$data[password]',
-                            '".date('Y-m-d H:i:s')."',
-                            '".date('Y-m-d H:i:s')."'
-            
-                        );";
-                    $this->db()->exec($sql);    
-                }
+                $data['password'] = hash('sha256', $data['password']);
+                $sql = "INSERT INTO `users` (
+                    `username`, 
+                    `email`,
+                    `password`,
+                    `created_at`,
+                    `updated_at`
+                    ) VALUES (
+                        '$data[username]',
+                        '$data[email]',
+                        '$data[password]',
+                        '".date('Y-m-d H:i:s')."',
+                        '".date('Y-m-d H:i:s')."'
+        
+                    );";
+                    try {
+                        $this->db()->exec($sql);    
+                    } catch (\Exception $e) { 
+                        http_response_code(409);
+                        $this->addMessage(["message" => "Username already exists.", "code" => 409]);
+                        $this->setView('signup.html',['signup' => $data]);            
+                        return false;
+                    }
                 return true;
         } else {
             $this->addMessage("Please correct the given user information.");
@@ -115,6 +145,8 @@ class UserController extends AbstractController {
                 $this->addMessage($key." is not correct.");
             }
             $this->setView('signup.html',['signup' => $data]);
+
         }
+        return false;
     }
 }

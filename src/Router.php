@@ -92,8 +92,10 @@ class Router {
 
             /* redirect to another route if specified while keeping current message stack */
             if (($config['redirect'] ?? '')) {
-                if (is_array($config['redirect']) && $config['redirect'][$result] ?? '') {
-                    $this->run($config['redirect'][$result], 'GET', $controller->getMessages());
+                if (is_array($config['redirect'])) {
+                    if ($config['redirect'][$result] ?? '') {
+                        $this->run($config['redirect'][$result], 'GET', $controller->getMessages());
+                    }
                 } else {
                     $this->run($config['redirect'], 'GET', $controller->getMessages());
                 }

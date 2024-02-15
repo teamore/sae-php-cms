@@ -4,12 +4,14 @@
     <button onclick="location.href='/login';">login</button>
 {% endblock %}
 {% block messages %}
-    {% if messages %}
-        {% if messages %}
-            {% for message in messages %}
+    {% if messages is iterable %}
+        {% for message in messages %}
+            {% if message.code %}
+                <div class="error">{{message.code}}: {{message.message}}</div>
+            {% else %}
                 <div class="error">{{message}}</div>
-            {% endfor %}
-        {% endif %}
+            {% endif %}
+        {% endfor %}
     {% else %}
         <div>
             Please register
@@ -17,14 +19,14 @@
     {% endif %}
 {% endblock %}
 {% block content %}
-    <form action="/signup" method="POST" enctype="multipart/form-data">
+    <form action="/{% if user %}users/me{% else %}signup{% endif %}" method="POST" enctype="multipart/form-data">
         <div>
             <label for="email">Email</label>
-            <input type="text" name="email" value="{{user.email | default('signup.email')}}">
+            <input type="text" name="email" value="{{user.email | default(signup.email)}}">
         </div>
         <div>
             <label for="username">Username</label>
-            <input type="text" name="username" value="{{user.username | default('signup.username')}}">
+            <input type="text" name="username" value="{{user.username | default(signup.username)}}">
         </div>
         {% if not user %}
             <div>
@@ -36,7 +38,7 @@
             <label for="media">Profile Image</label>
             <input type="file" name="media" />
         </div>
-        <div><input type="submit" value="signup"></div>
+        <div><input type="submit" value="{% if user %}update profile{% else %}signup{% endif %}"></div>
         <input type="hidden" name="model" value="User">
     </form>
 {% endblock %}
