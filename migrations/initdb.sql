@@ -1,3 +1,12 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: mysql
+-- Erstellungszeit: 15. Feb 2024 um 21:20
+-- Server-Version: 8.0.36
+-- PHP-Version: 8.2.8
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -29,7 +38,7 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`id`, `user`, `category`, `title`, `author`, `content`, `media`, `created_at`, `updated_at`) VALUES
-(1, 1, 'A', 'Riesenrad im Luna-Park', '', 'Der Luna-Park in Odessa ist einer der bekanntesten Freizeitparks in der Ukraine und befindet sich in der Stadt Odessa am Ufer des Schwarzen Meeres. Der Park wurde 2002 eröffnet und ist seitdem zu einer beliebten Attraktion für Einheimische und Touristen gleichermaßen geworden.\r\n\r\nDer Luna-Park bietet eine Vielzahl von Unterhaltungsmöglichkeiten für Besucher jeden Alters, darunter Fahrgeschäfte, Spielhallen, Restaurants und Souvenirläden. Zu den Hauptattraktionen gehören das Riesenrad, eine Achterbahn, Karussells, Schießstände und viele andere Vergnügungseinrichtungen.', '[{\"path\": \"posts/1/IPByGu\", \"size\": 300085, \"type\": \"image/jpeg\", \"thumb\": \"posts/1/t_IPByGu\", \"original\": \"51375230566_d0ab855d1b_c.jpg\"}]', '2024-02-14 23:36:31', '2024-02-14 23:43:05'),
+(1, 1, 'A', 'Riesenrad im Luna-Park', '', 'Der Luna-Park in Odessa ist einer der bekanntesten Freizeitparks in der Ukraine und befindet sich in der Stadt Odessa am Ufer des Schwarzen Meeres. Der Park wurde 2002 eröffnet und ist seitdem zu einer beliebten Attraktion für Einheimische und Touristen gleichermaßen geworden.\r\n\r\nDer Luna-Park bietet eine Vielzahl von Unterhaltungsmöglichkeiten für Besucher jeden Alters, darunter Fahrgeschäfte, Spielhallen, Restaurants und Souvenirläden. Zu den Hauptattraktionen gehören das Riesenrad, eine Achterbahn, Karussells, Schießstände und viele andere Vergnügungseinrichtungen.', '[{\"path\": \"posts/1/IPByGu\", \"size\": 300085, \"type\": \"image/jpeg\", \"thumb\": \"posts/1/t_IPByGu\", \"original\": \"51375230566_d0ab855d1b_c.jpg\"}]', '2024-02-14 23:36:31', '2024-02-15 18:21:57'),
 (2, 1, 'A', 'Sonnenblumenfelder', '', 'Die Nordukraine, insbesondere die Oblasten Sumy, Tschernihiw und Charkiw, ist für ihre fruchtbaren Böden und das gemäßigte Klima bekannt, die ideale Bedingungen für den Anbau von Sonnenblumen bieten. Sonnenblumen sind eine wichtige Nutzpflanze in der Ukraine und werden für die Produktion von Sonnenblumenöl, Samen und Viehfutter angebaut.\r\n\r\nWährend der Sommermonate erstrecken sich die endlosen Felder mit Sonnenblumen über das Land und bilden ein beeindruckendes Schauspiel. Die leuchtend gelben Blüten neigen sich sanft im Wind und schaffen ein malerisches Panorama, das Besucher aus der ganzen Welt anlockt.\r\n\r\nDie Sonnenblumenfelder der Nordukraine sind nicht nur landschaftlich reizvoll, sondern haben auch eine kulturelle Bedeutung für die Region. Sonnenblumen gelten oft als Symbol für Wohlstand, Hoffnung und Freude und werden in der ukrainischen Kultur hoch geschätzt.', '[{\"path\": \"posts/2/Ef05RF\", \"size\": 216214, \"type\": \"image/jpeg\", \"thumb\": \"posts/2/t_Ef05RF\", \"original\": \"51351331982_5e124f9a8f_c.jpg\"}]', '2024-02-14 23:37:06', '2024-02-14 23:44:29'),
 (3, 1, 'B', 'Schiffswrak in Vestvågøy', '', 'Dieses an der Steuerbordseite des Rumpfes und am Oberdeck stark beschädigte und daraufhin wohl mindestens zum Teil gekenterte Fischerboot wurde zu einem an der Südküste der Lofoteninsel Vestvågøy gelegenen Schiffsfriedhof geschleppt und hat dort seine letzte Ruhestätte gefunden, bevor ich es während meiner Norwegenreise mit meiner Kamera verewigte.', '[{\"path\": \"posts/3/kwX5j8\", \"size\": 239825, \"type\": \"image/jpeg\", \"thumb\": \"posts/3/t_kwX5j8\", \"original\": \"48271424992_cc0c1694a9_c.jpg\"}]', '2024-02-14 23:38:19', '2024-02-14 23:46:00'),
 (4, 1, 'C', 'Im Nebelwald', '', 'Die nebelverhangenen Wälder der Kanarischen Inseln sind ein faszinierendes und einzigartiges Ökosystem, das sich durch seine besondere Flora und Fauna auszeichnet. Diese Wälder, auch als \"Laurisilva\" bekannt, sind Relikte aus der Tertiärzeit und gehören zu den ältesten Wäldern der Welt. Sie sind ein wichtiges Naturerbe und haben daher eine besondere Bedeutung für die Kanarischen Inseln.\r\n\r\nDie Laurisilva-Wälder erstrecken sich hauptsächlich in höheren Lagen der Inseln, wo die feuchten Passatwinde auf die Berge treffen und für die Bildung von Nebel sorgen. Diese Nebel, die in den Wäldern hängen bleiben, tragen dazu bei, die Feuchtigkeit zu erhalten und schaffen so ein einzigartiges Mikroklima, das für das Wachstum einer Vielzahl von Pflanzenarten entscheidend ist.\r\n\r\nDie Vegetation in den nebelverhangenen Wäldern der Kanarischen Inseln ist äußerst vielfältig und umfasst viele endemische Arten, die nirgendwo sonst auf der Welt vorkommen. Zu den charakteristischen Pflanzen zählen Lorbeerbäume, Baumheide, Baumfarnarten und verschiedene Moose und Flechten. Diese Artenvielfalt bietet Lebensraum für eine Vielzahl von Tieren, darunter seltene Vogelarten wie den Kanarengirlitz und den Kanarenzeisig, sowie zahlreiche Insekten- und Spinnenarten.\r\n\r\nDie nebelverhangenen Wälder der Kanarischen Inseln sind nicht nur ein Paradies für Naturliebhaber und Wanderer, sondern spielen auch eine wichtige ökologische Rolle für den Wasserhaushalt und den Erhalt der Biodiversität auf den Inseln. Aus diesem Grund sind viele dieser Wälder als Naturreservate geschützt und stehen unter dem Schutz der UNESCO als Weltnaturerbe.', '[{\"path\": \"posts/4/S6f0yW\", \"size\": 184132, \"type\": \"image/jpeg\", \"thumb\": \"posts/4/t_S6f0yW\", \"original\": \"39135077682_41d0e39bfb_c.jpg\"}]', '2024-02-14 23:38:27', '2024-02-14 23:47:39'),
@@ -71,9 +80,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `media`, `created_at`, `updated_at`) VALUES
-(1, 'Timor', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', NULL, '2024-01-31 18:25:41', '2024-02-14 23:23:16'),
+(1, 'Timor', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'test@example.com', NULL, '2024-01-31 18:25:41', '2024-02-15 20:25:38'),
 (2, 'Ellie', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', NULL, '2024-01-31 18:43:45', '2024-01-31 18:43:45'),
-(3, 'Joel', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', NULL, '2024-02-06 11:09:46', '2024-02-06 11:09:46');
+(3, 'Joel', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'timor@kodal.de', NULL, '2024-02-06 11:09:46', '2024-02-06 11:09:46'),
+(4, 'Sascha', '5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5', 'sascha@example.com', NULL, '2024-02-15 19:27:16', '2024-02-15 19:27:16');
 
 --
 -- Indizes der exportierten Tabellen
@@ -100,7 +110,8 @@ ALTER TABLE `post_likes`
 -- Indizes für die Tabelle `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- AUTO_INCREMENT für exportierte Tabellen
@@ -122,7 +133,7 @@ ALTER TABLE `post_likes`
 -- AUTO_INCREMENT für Tabelle `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints der exportierten Tabellen
