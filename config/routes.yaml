@@ -60,7 +60,7 @@
   action: edit
 
 /newPost:
-  match: '#^/posts/edit/?$#'
+  match: '#^/posts/edit$#'
   controller: PostController
   action: edit
 
