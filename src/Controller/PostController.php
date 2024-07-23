@@ -75,8 +75,8 @@ class PostController extends AbstractController {
         $media = $this->db()->query("SELECT `media` FROM `posts` WHERE `id`='$id';")->fetchColumn();
         $media = json_decode($media, true);
         foreach($media as $file) {
-            unlink("/var/www/html/public/".$file['path'].$file['name']);
-            unlink("/var/www/html/public/".$file['thumb']);
+            unlink("/var/www/html/public/assets/uploads/".$file['path']);
+            unlink("/var/www/html/public/assets/uploads/".$file['thumb']);
         }
         $result = $this->db()->exec("DELETE FROM `posts` WHERE `id`='$id' AND `user`='$uid' LIMIT 1;");
         return $this->index();
