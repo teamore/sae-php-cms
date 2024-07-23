@@ -50,6 +50,8 @@
                     <button onclick="location.href='/login';">login</button>
                     <button onclick="location.href='/signup';">signup</button>
                 {% endif %}
+            {% endblock %}
+            {% block search %}
                 <form action="/search" method="GET">
                     <input type="text" 
                         name="searchterm" 
