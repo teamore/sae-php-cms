@@ -107,6 +107,12 @@
 /search:
   controller: SearchController
 
+/search2:
+  match: '#^/search/([a-zA-Z0-9äöüÄÖÜ]+)$#'
+  match_params:
+    1: searchterm 
+  controller: SearchController
+
 /me:
   alias: /me/edit
   controller: UserController
