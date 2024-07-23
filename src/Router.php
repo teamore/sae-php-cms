@@ -76,7 +76,7 @@ class Router {
                 $result = $controller->$actionName();
             } catch (\Exception $exception) {
                 $controller->addMessage(["code"=>$exception->getCode(), "message"=>$exception->getMessage()]);
-                http_response_code($exception->getCode());
+                http_response_code((int) $exception->getCode());
                 $controller->setView('error.html');
             }
             if ($controller->getView() && in_array('text/html', explode(",",$headers['Accept']))) {
