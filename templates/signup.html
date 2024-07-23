@@ -20,11 +20,11 @@
     <form action="/signup" method="POST" enctype="multipart/form-data">
         <div>
             <label for="email">Email</label>
-            <input type="text" name="email" value="{{user.email | default('signup.email')}}">
+            <input type="text" name="email" value="{{user.email | default(signup.email)}}">
         </div>
         <div>
             <label for="username">Username</label>
-            <input type="text" name="username" value="{{user.username | default('signup.username')}}">
+            <input type="text" name="username" value="{{user.username | default(signup.username)}}">
         </div>
         {% if not user %}
             <div>
