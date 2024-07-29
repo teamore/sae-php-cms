@@ -43,7 +43,7 @@
   match_params:
     1: user_id
   controller: UserController
-  action: userShow
+  action: one
 
 /showPost:
   match: '#^/posts/([0-9]+)$#'

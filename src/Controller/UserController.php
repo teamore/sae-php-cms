@@ -8,7 +8,7 @@ class UserController extends AbstractController {
     public function showSignup() {
         $this->setView("signup.html");
     }
-    public function userShow() {
+    public function one() {
         $uid = $this->query['user_id'];
         $result = $this->db()->query("SELECT * FROM `users` WHERE `id`='$uid';")->fetch(\PDO::FETCH_ASSOC);
         $this->setView("user.html", ["result" => $result]);
