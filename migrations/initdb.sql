@@ -30,7 +30,7 @@ CREATE TABLE `posts` (
 
 INSERT INTO `posts` (`id`, `user`, `category`, `title`, `author`, `content`, `media`, `created_at`, `updated_at`) VALUES
 (1, 1, 'B', 'Testeintrag', '', 'Lorem Ipsum', '[{\"path\": \"posts/1/UXAnsL\", \"size\": 38893, \"type\": \"image/jpeg\", \"thumb\": \"posts/1/t_UXAnsL\", \"original\": \"Timor.jpg\"}]', '2024-01-31 18:26:32', '2024-02-08 22:58:11'),
-(2, 2, 'B', 'Mein toller neuer Beitrag', '', 'Mit hochinteressantem Inhalt', NULL, '2024-01-31 18:44:17', '2024-01-31 18:44:17'),
+(2, 2, 'B', 'Mein toller neuer Beitrag', '', 'Mit hochinteressantem Inhalt', NULL, '2024-01-31 18:44:17', '2024-01-31 18:44:17');
 
 -- --------------------------------------------------------
 
