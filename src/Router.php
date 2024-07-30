@@ -89,6 +89,9 @@ class Router {
                 header('Content-Type: application/json');
                 echo json_encode(["payload" => $controller->getPayload(), "result" => $result, "messages" => $controller->getMessages()]);
                 die();
+            } else if (in_array('application/yaml', $acceptHeaders)) {
+                echo yaml_emit(["payload" => $controller->getPayload(), "result" => $result, "messages" => $controller->getMessages()]);
+
             }
 
             /* redirect to another route if specified while keeping current message stack */
