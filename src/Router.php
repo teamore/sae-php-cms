@@ -91,7 +91,7 @@ class Router {
                 die();
             } else if (in_array('application/yaml', $acceptHeaders)) {
                 echo yaml_emit(["payload" => $controller->getPayload(), "result" => $result, "messages" => $controller->getMessages()]);
-
+                die();
             }
 
             /* redirect to another route if specified while keeping current message stack */
