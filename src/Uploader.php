@@ -4,13 +4,18 @@ class Uploader {
     protected static String $uploadPath = '/var/www/html/public/assets/uploads/';
 
     public static function show($id, $model = 'posts', $mediaId = 0) {
-        $result = Database::connect()->query("SELECT media FROM `posts` WHERE `id`='$id';")->fetchColumn();
-        $media = json_decode($result, true);
-        $file = $media[$mediaId ? $mediaId : 0];
-        $filename = self::$uploadPath . $file['path'];
-        header("Content-Type: $file[type]");
-        header("Content-Length: ".filesize($filename));
-        echo file_get_contents($filename);
+        $sql = "SELECT `media` FROM `$model` WHERE `id`='$id';";
+        $result = Database::connect()->query($sql)->fetchColumn();
+        if ($result) {
+            $media = json_decode($result, true);
+            $file = $media[$mediaId ? $mediaId : 0];
+            $filename = self::$uploadPath . $file['path'];
+            header("Content-Type: $file[type]");
+            header("Content-Length: ".$file['size']);
+            echo file_get_contents($filename);   
+        } else {
+            throw new \Exception("No Media File available for this resource", 404);
+        }
         die();
 
     }

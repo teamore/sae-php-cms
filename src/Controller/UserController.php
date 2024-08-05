@@ -1,6 +1,8 @@
 <?php
 namespace App\Controller;
 use App\Controller\AbstractController;
+use App\Model\User;
+use App\Uploader;
 class UserController extends AbstractController {
     protected $requirements = 
     [
@@ -23,6 +25,12 @@ class UserController extends AbstractController {
         $user = $this->getUser();
         $user->password = "***";
         $this->setView("user_edit.html", ["user"=>$user]);
+    }
+    public function syncUser(int $uid) {
+        $user = $this->db()->query("SELECT * FROM `users` WHERE  `id`=$uid;';")->fetchObject();
+        if ($user) {
+            $_SESSION['user'] = $user;
+        }
     }
     public function doLogin(): object|bool {
         $user = $this->db()->query("
@@ -88,13 +96,20 @@ class UserController extends AbstractController {
                     if ($this->db()->exec($sql)) {
                         $user = $this->db()->query("SELECT * FROM `users` WHERE `id`='$uid'")->fetchObject();
                         $_SESSION['user'] = $user;
-                        return true;
                     }    
                 } catch (\Exception $e) { 
                     $this->addMessage(["message" => "Username already exists.", "code" => 409]);
                     $this->setView('signup.html',['signup' => $data]);    
                     return false;        
-                }
+            }
+            $uploader = new Uploader();
+            $media = $uploader->handleFileUploads("users/$uid/");
+            # Store media array as JSON
+            if (count($media) > 0) {
+                User::attachMedia($media, $uid);
+            }
+            $this->syncUser($uid);
+            return true;               
         } else {
             $this->addMessage("Please correct the given user information.");
             foreach ($errors as $key => $error) {

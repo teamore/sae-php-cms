@@ -7,8 +7,9 @@ use App\Uploader;
 class MediaController extends AbstractController
 {
     public function show() {
-        $postId = $this->query['post_id'];
+        $model = $this->query['model'] ?? 'posts';
+        $id = $this->query['id'];
         $mediaId = $this->query['media_id'];
-        Uploader::show($postId, $mediaId);
+        Uploader::show($id, $model, $mediaId);
     }
 }

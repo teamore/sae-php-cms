@@ -110,11 +110,11 @@
   action: unlike
 
 /showMedia:
-  alias: media
-  match: '#^/media/posts/([0-9]+)/?([0-9]*)$#'
+  match: '#^/media/([a-z]+)/([0-9]+)/?([0-9]*)$#'
   match_params:
-    1: post_id
-    2: media_id
+    1: model
+    2: id
+    3: media_id
   method: GET
   controller: MediaController
   action: show
