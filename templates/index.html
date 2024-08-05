@@ -22,6 +22,16 @@
             }
             location.href="/"+type+"/"+id;
         }
+        window.addEventListener('scroll', function() {
+            var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
+            var body = document.body, html = document.documentElement;
+            var docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,  html.scrollHeight, html.offsetHeight);
+            var windowBottom = windowHeight + window.pageYOffset;
+
+            if (windowBottom >= docHeight) {
+                console.log("bottom reached..");
+            }
+        });
     </script>
 {% endblock %}
 {% block content %}
