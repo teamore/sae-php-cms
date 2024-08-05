@@ -22,6 +22,41 @@
             }
             location.href="/"+type+"/"+id;
         }
+        function addRow(data, type = 'posts') {
+            const newRow = 
+                `<tr>
+                    <td>`+data.title+`</td>
+                    <td>`+data.username+`</td>
+                    <td>`+data.category+`</td>
+                    <td>`+(data.media ? `<img src="/media/`+type+`/`+data.id+`" width="100px">` : ``)+`</td>
+                    <td>`+data.created_at+`</td>
+                    <td>
+                        <button onclick="showEntry(`+data.id+`, '`+type+`')">show</button>
+                        <button onclick="showEntry('edit/`+data.id+`')">edit</button>
+                        <button onclick="sendDeleteRequest(`+data.id+`,'`+data.title+`');">kill</button>
+                    </td>
+                </tr>`;
+            document.getElementById('resultsTable').
+            getElementsByTagName('tbody')[0].
+            insertAdjacentHTML('beforeend', newRow);
+        }
+        async function addRows() {
+            document.currentPage ++;
+            await fetch('/posts?page='+(document.currentPage)+'&per_page=5&filter[category]=', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    const results = data.payload.results;
+                    for(result of results) {
+                        addRow(result);
+                        console.log(result.id);
+                    }
+                })            
+        }
+        document.currentPage = parseInt(new URLSearchParams(window.location.search).get('page'));
         window.addEventListener('scroll', function() {
             var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
             var body = document.body, html = document.documentElement;
@@ -29,7 +64,8 @@
             var windowBottom = windowHeight + window.pageYOffset;
 
             if (windowBottom >= docHeight) {
-                console.log("bottom reached..");
+                console.log("bottom reached...");
+                addRows();
             }
         });
     </script>
@@ -58,7 +94,7 @@
                 <a href="/posts?filter[category]=">reset</a>
             </div>
         {% endif %}
-        <table>
+        <table id="resultsTable">
             <tr>
                 <th>Title</th>
                 <th>Author</th>
