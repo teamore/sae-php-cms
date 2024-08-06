@@ -41,8 +41,8 @@
             insertAdjacentHTML('beforeend', newRow);
         }
         async function addRows() {
-            document.currentPage ++;
-            await fetch('/posts?page='+(document.currentPage)+'&per_page=5&filter[category]=', {
+            document.currentPage++;
+            await fetch('/posts?page='+document.currentPage+'&per_page='+getURLParam('per_page', 5)+'&filter[category]='+getURLParam('filter[category]'), {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
@@ -52,11 +52,14 @@
                     const results = data.payload.results;
                     for(result of results) {
                         addRow(result);
-                        console.log(result.id);
                     }
                 })            
         }
-        document.currentPage = parseInt(new URLSearchParams(window.location.search).get('page'));
+        let params = new URLSearchParams(window.location.search);
+        document.currentPage = parseInt(getURLParam('page', 1));
+        function getURLParam(name, def = false) {
+            return params.get(name) ?? def; 
+        }
         window.addEventListener('scroll', function() {
             var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
             var body = document.body, html = document.documentElement;
@@ -64,7 +67,7 @@
             var windowBottom = windowHeight + window.pageYOffset;
 
             if (windowBottom >= docHeight) {
-                console.log("bottom reached...");
+                console.log("bottom reached!");
                 addRows();
             }
         });
