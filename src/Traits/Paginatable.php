@@ -17,6 +17,10 @@ trait Paginatable {
         # enforce min/max currentPage #
         $this->currentPage = $this->currentPage < 1 ? 1 : (int) $this->currentPage;
     }
+    public function setResultsPerPage($value) {
+        $this->resultsPerPage = $value;
+        $this->pagesAmount = ceil($this->resultsAmount / $this->resultsPerPage);
+    }
     public function addPaginatorToPayload(&$payload) {
         $payload['paginator'] = [
             'pagesAmount' => $this->pagesAmount,

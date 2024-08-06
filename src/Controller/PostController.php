@@ -1,5 +1,6 @@
 <?php
 namespace App\Controller;
+use App\Config;
 use App\Model\Post;
 use App\Model\PostLike;
 use App\Traits\Paginatable;
@@ -10,12 +11,14 @@ class PostController extends AbstractController {
     {
         $filter = isset($_REQUEST['filter']) ? array_filter($_REQUEST['filter']) : null;
         $this->setPagination(Post::count($filter));
+        $this->setResultsPerPage($_REQUEST['per_page'] ?? Config::getConfig('paginator')['per_page']);
 
         $results = Post::all($filter, $this->resultsPerPage, (($this->currentPage) - 1) * ($this->resultsPerPage));
 
         $this->setView('index.html', [
             'results' => $results,
-            'filter' => $filter
+            'filter' => $filter,
+            'paginatorConfig' => Config::getConfig('paginator')
         ]);
     }
     public function one($id = null) {

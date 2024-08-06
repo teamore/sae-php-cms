@@ -60,6 +60,10 @@
                     <input type="submit" />
                 </form>
             {% endblock %}
+            <div id="paginator">
+                {% block paginator %}
+                {% endblock %}
+            </div>        
         </div>
         <div id="content">
             {% block content %}
