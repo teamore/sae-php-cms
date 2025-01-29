@@ -8,7 +8,9 @@ class Uploader {
         $result = Database::connect()->query($sql)->fetchColumn();
         if ($result) {
             $media = json_decode($result, true);
-            $file = $media[$mediaId ? $mediaId : 0];
+            $file = $media[$mediaId ? $mediaId : 0] ?? null;
+        } 
+        if ($file ?? null) {
             $filename = self::$uploadPath . $file['path'];
             header("Content-Type: $file[type]");
             header("Content-Length: ".$file['size']);
