@@ -33,7 +33,7 @@ class Uploader {
                 
                 # Generate and store thumbnail
                 $file['thumb'] = 't_' . $file['target'];
-                $this->generateImage($file['tmp_name'], $fullPath . $file['thumb'], 100, 100);
+                $this->generateImage($file['tmp_name'], $fullPath . $file['thumb'], $file['type'], 100, 100);
                 
                 # Move temporary file to final destination
                 $fileDestination = $fullPath . $file['target'];
@@ -58,13 +58,13 @@ class Uploader {
         unlink($uniqueName);
         return substr($uniqueName, strlen($path));
     }
-    public function generateImage(String $source, String $targetFilename, int $width, int $height, int $quality = 75) {
+    public function generateImage(String $source, String $targetFilename, string $type, int $width, int $height, int $quality = 75) {
         $exif = exif_imagetype($source);
         if ($exif === false) {
             return null;
         }
         $targetImage = imagecreatetruecolor($width, $height);
-        $sourceImage = imagecreatefromjpeg($source);
+        $sourceImage = $type === 'image/jpeg' ? imagecreatefromjpeg($source) : imagecreatefrompng($source);
         list($w, $h) = getimagesize($source);
         $ratio = $w / $h;
         $newRatio = $width / $height;
