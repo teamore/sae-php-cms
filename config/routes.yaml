@@ -110,7 +110,7 @@
   action: unlike
 
 /showMedia:
-  match: '#^/media/([a-z]+)/([0-9]+)/?([0-9]*)$#'
+  match: '#^/media/(posts|users)/([0-9]+)/?([0-9]*)$#'
   match_params:
     1: model
     2: id
