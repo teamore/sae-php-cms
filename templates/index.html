@@ -26,18 +26,28 @@
 {% endblock %}
 {% block content %}
     {% if results|length >= 1 %}
-        <div class="pagination">
-            <a href="/posts?page={{currentPage - 1}}&per_page={{perPage}}&filter[category]={{filter.category}}" class="{% if currentPage < 2 %}disabled{% endif %}">&lt;</a>
-            {% for i in 1..pagesAmount %}
-                <a href="/posts?page={{i}}&per_page={{perPage}}&filter[category]={{filter.category}}" class="{% if i == currentPage %}active{% endif %}">{{i}}</a>
-            {% endfor %}
-            <a href="/posts?page={{currentPage + 1}}&per_page={{perPage}}&filter[category]={{filter.category}}" class="{% if currentPage >= pagesAmount %}disabled{% endif %}">></a>
-            Filter: Category 
-            <a href="/posts?filter[category]=A">A</a>
-            <a href="/posts?filter[category]=B">B</a>
-            <a href="/posts?filter[category]=">reset</a>
-        </div>
-
+        {% if paginator %}
+            <div class="pagination">
+                {% if paginator.currentPage > 1 %}
+                    <a href="/posts?page={{paginator.currentPage - 1}}&per_page={{paginator.perPage}}&filter[category]={{filter.category}}"">&lt;</a>
+                {% else %}
+                    <span class="disabled">&lt;</span>
+                {% endif %}
+                {% for i in 1..paginator.pagesAmount %}
+                    <a href="/posts?page={{i}}&per_page={{paginator.perPage}}&filter[category]={{filter.category}}" class="{% if i == paginator.currentPage %}active{% endif %}">{{i}}</a>
+                {% endfor %}
+                {% if paginator.currentPage < paginator.pagesAmount %}
+                    <a href="/posts?page={{paginator.currentPage + 1}}&per_page={{paginator.perPage}}&filter[category]={{filter.category}}">></a>
+                {% else %}
+                    <span class="disabled">></span>
+                {% endif %}
+                Filter: Category 
+                <a href="/posts?filter[category]=A">A</a>
+                <a href="/posts?filter[category]=B">B</a>
+                <a href="/posts?filter[category]=C">C</a>
+                <a href="/posts?filter[category]=">reset</a>
+            </div>
+        {% endif %}
         <table>
             <tr>
                 <th>Title</th>
@@ -67,17 +77,16 @@
                     </td>
                 </tr>
             {% endfor %}
-            <tr>
-                <td colspan="100%" onclick="location.href='/posts/edit';">
-                    <button onclick="location.href='/posts/edit';">add</button>
-                </td>
-            </tr>
         </table>
         {% else %}
         <div>
             Your search returned no results
         </div>
     {% endif %}
+    <div>
+        <button onclick="location.href='/posts/edit';">add</button>
+    </div>
+
 {% endblock %}
 {% block appendix %}
     <button onclick="location.href='/';">back</button>

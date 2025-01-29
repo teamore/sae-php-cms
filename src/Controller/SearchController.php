@@ -11,10 +11,10 @@ class SearchController extends AbstractController {
                 OR p.`title` LIKE '%$searchterm%'
                 OR u.`username` LIKE '%$searchterm%'
                 ;";
-            $postResults = $this->db()->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
-            $sql = "SELECT *, 'users' as `type` FROM `users` WHERE `username` LIKE '%$searchterm%';";
-            $userResults = $this->db()->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
-            $searchResults = array_merge($postResults, $userResults);
+            $searchResults = $this->db()->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+//            $sql = "SELECT *, 'users' as `type` FROM `users` WHERE `username` LIKE '%$searchterm%';";
+//            $userResults = $this->db()->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+//            $searchResults = array_merge($postResults, $userResults);
         }
         $this->setView("index.html", ["searchterm"=> $searchterm,"results" => $searchResults ?? []]);
     }
