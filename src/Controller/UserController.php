@@ -50,7 +50,7 @@ class UserController extends AbstractController {
     public function doLogout(): bool {
         if ($this->getUser()) {
             unset($_SESSION["user"]);
-            $this->addMessage("Logout successul.");
+            $this->addMessage("Logout successful.");
             return true;
         }
         return false;
