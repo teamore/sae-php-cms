@@ -49,7 +49,7 @@ class Post extends AbstractModel {
         return Database::connect()->query("
             UPDATE `".self::$table."` SET 
             `title`='$data[title]',
-            `author`='$data[author]',
+            `author`='".($data['author'] ?? '')."',
             `content`='$data[content]',
             `updated_at`='".date('Y-m-d H:i:s')."'
             WHERE 
@@ -69,7 +69,7 @@ class Post extends AbstractModel {
             ) VALUES (
                 '$data[title]',
                 '$data[user]',
-                '$data[author]',
+                '".($data['author'] ?? '')."',
                 '$data[content]',
                 '".date('Y-m-d H:i:s')."',
                 '".date('Y-m-d H:i:s')."'
