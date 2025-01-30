@@ -62,7 +62,7 @@ class PostController extends AbstractController {
             throw new \Exception('Only authenticated Users may create Posts', 401);
         }
         $data['user'] = $user->id;
-        if ($data['id']) {
+        if ($data['id'] ?? null) {
             if (!is_numeric($data['id'])) {
                 return;
             }
@@ -70,8 +70,9 @@ class PostController extends AbstractController {
             
         } else {
             $data['id'] = Post::insert($data);
-            $result = $data['id'] > 0;
+            $result = $data['id'];
         }
+        
         $uploader = new Uploader();
         $media = $uploader->handleFileUploads("posts/$data[id]/");
 
@@ -82,16 +83,21 @@ class PostController extends AbstractController {
         return $result;
     }
     public function delete($id = null) {
-        $id = $id ?? $this->query['post_id'];
+        $id = $id ?? $this->query['post_id'] ?? null;
+        if (!$id) {
+            throw new \Exception('You may only delete existing posts', 404);
+        }
         $uid = $this->getUserId(true);
         $media = $this->db()->query("SELECT `media` FROM `posts` WHERE `id`='$id';")->fetchColumn();
-        $media = json_decode($media, true);
-        foreach($media as $file) {
-            unlink("/var/www/html/public/".$file['path'].$file['name']);
-            unlink("/var/www/html/public/".$file['thumb']);
+        if ($media) {
+            $media = json_decode($media, true);
+            foreach($media as $file) {
+                unlink("/var/www/html/public/".$file['path'].$file['name']);
+                unlink("/var/www/html/public/".$file['thumb']);
+            }
         }
         $result = $this->db()->exec("DELETE FROM `posts` WHERE `id`='$id' AND `user`='$uid' LIMIT 1;");
-        return $this->index();
+        return $result;
     }
     public function like($id = null) {
         $postId = $id ?? $this->query['post_id'];
