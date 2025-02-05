@@ -95,6 +95,22 @@
   controller: PostController
   action: delete
 
+/commentOnPost:
+  match: '#^/posts/([0-9]+)/comment#'
+  match_params:
+    1: post_id  
+  method: POST
+  controller: PostController
+  action: comment
+
+/deleteComment:
+  match: '#^/comments/([0-9]+)#'
+  match_params:
+    1: comment_id
+  method: DELETE
+  controller: PostController
+  action: uncomment
+
 /likePost:
   match: '#^/posts/([0-9]+)/like$#'
   match_params:

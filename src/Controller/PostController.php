@@ -2,6 +2,7 @@
 namespace App\Controller;
 use App\Config;
 use App\Model\Post;
+use App\Model\PostComment;
 use App\Model\PostLike;
 use App\Traits\Paginatable;
 use App\Uploader;
@@ -35,8 +36,38 @@ class PostController extends AbstractController {
             $result2 = PostLike::findBy("`post`='$id' AND `user`='$uid'", "id");
             $result['ilike'] = ($result2 !== false);
         }            
+        $comments = $this->db()->query("SELECT * FROM `post_comments` WHERE `post`='$id';")->fetchAll();
+        $result['comments'] = $comments;
         # call view
         $this->setView('post.html', ['result' => $result]);
+    }
+    public function comment($id = null) {
+        $id = $this->query['post_id'] ?? 0;
+        $uid = $this->getUserId(true);
+        $result = PostComment::insert($id, $uid, $_POST['content'], $_POST['title']);
+        return $this->one($id);
+    }
+    public function uncomment($commentId = null) {
+        $commentId = $this->query['comment_id'] ?? 0;
+        $uid = $this->getUserId(true);
+        if ($uid) {
+            $comment = PostComment::find($commentId);
+            if ($uid != $comment['user']) {
+                $authorId = Post::find($comment['post'], 'p.`user`');
+                if ($authorId != $uid) {
+                    throw new \Exception('Users are not allowed to delete foreign Comments', 403);
+                }
+            }
+        }            
+        try {
+            $result = PostComment::delete($commentId);
+        } catch (\PDOException $e) {
+            throw new \Exception($e->getMessage(),500);
+        }
+        if (!$result) {
+            throw new \Exception("This resource has already been deleted.",304);
+        }
+        return ["affectedRows" => $result];
     }
     public function edit($id = null) {
         $id = $this->query['post_id'] ?? 0;
@@ -120,7 +151,7 @@ class PostController extends AbstractController {
         $uid = $this->getUserId(true);
 
         try {
-            $result = PostLike::delete($postId, $uid);
+            $result = PostLike::unlike($postId, $uid);
         } catch (\PDOException $e) {
             throw new \Exception($e->getMessage(),500);
         }

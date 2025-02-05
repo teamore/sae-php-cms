@@ -10,7 +10,7 @@ class PostLike extends AbstractModel {
             ('$postId', '$userId', '".date('Y-m-d H:i:s')."');
         ");            
     }
-    public static function delete($postId, $userId) {
+    public static function unlike($postId, $userId) {
         return Database::connect()->exec("
             DELETE FROM `post_likes` WHERE `post`=$postId AND `user`=$userId;
         ");

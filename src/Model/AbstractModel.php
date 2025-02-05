@@ -6,6 +6,9 @@ class AbstractModel {
     public static function findBy($condition, $fields = '*') {
         return Database::connect()->query("SELECT $fields FROM `".static::$table."` WHERE $condition;")->fetch(\PDO::FETCH_ASSOC);
     }
+    public static function find($id, $fields = '*') {
+        return Database::connect()->query("SELECT $fields FROM `".static::$table."` WHERE `id`='$id';")->fetch(\PDO::FETCH_ASSOC);
+    }
     public static function getTable(): string {
         return static::$table;
     }
@@ -21,6 +24,11 @@ class AbstractModel {
             }
         }
         return $sql;
+    }
+    public static function delete($id) {
+        return Database::connect()->exec("
+            DELETE FROM `".static::$table."` WHERE `id`='$id';
+        ");
     }
     public function db() {
         $pdo = Database::connect();

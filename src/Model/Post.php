@@ -30,10 +30,10 @@ class Post extends AbstractModel {
         return $results;
     }
 
-    public static function find($id) {
+    public static function find($id, $fields = "p.*, u.`username`, u.`email`, COUNT(l.`id`) AS `likes`") {
         # retrieve results
         return Database::connect()->query("
-            SELECT p.*, u.`username`, u.`email`, COUNT(l.`id`) AS `likes` FROM `".self::getTable()."` p 
+            SELECT $fields FROM `".self::getTable()."` p 
             LEFT JOIN
                 `".User::getTable()."` u
             ON p.`user` = u.`id`
