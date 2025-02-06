@@ -1,5 +1,21 @@
 {% extends "base.html" %}
 {% block title %}Edit {{result.title}}{% endblock %}
+{% block script %}
+    <script>
+    async function updateImage(id, data) {
+        console.log("uploading image");
+        console.log(data);
+        var response = await fetch('/upload/posts/'+id, {
+                method: 'POST',
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            handleResponse(response, false);        
+    } 
+    </script>
+{% endblock %}
 {% block content %}
     <form action="/posts" enctype="multipart/form-data" method="POST">
         <div>
@@ -16,7 +32,10 @@
         </div>
         <div>
             <label for="image">Image</label>
-            <input type="file" name="image" accept="image/png, image/jpeg">
+            <input type="file" id="file-input" name="image" accept="image/png, image/jpeg">
+            <div id="message"></div>
+            <img id="file-content" />
+            <button type="button" id="update-image" disabled onclick="updateImage({{result.id}},document.uploadedImage);">update image</button>
         </div>
         <div>
             <label for="sound">Sound File</label>
@@ -33,4 +52,40 @@
         </div>
         <input type="hidden" name="id" value="{{result.id}}">
     </form>
+    <script defer>
+        const fileInput = document.getElementById("file-input");
+        const fileContentDisplay = document.getElementById("file-content");
+        const messageDisplay = document.getElementById("message");
+        fileInput.addEventListener("change", handleFileSelection);
+        function handleFileSelection(event) {
+            const file = event.target.files[0];
+            fileContentDisplay.textContent = ""; // Clear previous file content
+            messageDisplay.textContent = ""; // Clear previous messages
+
+            // Validate file existence and type
+            if (!file) {
+                showMessage("No file selected. Please choose a file.", "error");
+                return;
+            }
+
+            // Read the file
+            const reader = new FileReader();
+            reader.onload = () => {
+                document.uploadedImage = reader.result;
+                fileContentDisplay.setAttribute("width", 300);
+                fileContentDisplay.setAttribute("height", 200);
+                fileContentDisplay.src = reader.result;
+                document.getElementById("update-image").disabled = false;
+            };
+            reader.onerror = () => {
+                showMessage("Error reading the file. Please try again.", "error");
+            };
+            reader.readAsDataURL(file);
+        }
+        function showMessage(message, type) {
+            messageDisplay.textContent = message;
+            messageDisplay.style.color = type === "error" ? "red" : "green";
+        }
+    
+    </script>
 {% endblock %}

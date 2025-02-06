@@ -19,9 +19,10 @@ class Uploader {
         die();
 
     }
-    public function handleFileUploads($path):Array {
+    public function handleFileUploads($path, $files = null):Array {
+        $files = $files ?? $_FILES;
         $media = [];
-        foreach($_FILES as $file) {
+        foreach($files as $file) {
             if ($file['name'] && $file['error']) {
                 throw new \Exception("File ".$file['name']." could not be uploaded. (error $file[error])", 422);
             }
@@ -42,8 +43,13 @@ class Uploader {
                 
                 # Move temporary file to final destination
                 $fileDestination = $fullPath . $file['target'];
+                
                 if (!file_exists($fileDestination)) {
-                    move_uploaded_file($file['tmp_name'], $fileDestination);
+                    if (!move_uploaded_file($file['tmp_name'], $fileDestination)) {
+                        if (!rename($file['tmp_name'], $fileDestination)) {
+                            throw new \Exception('Uploaded file could not be moved to designated destination', 500);
+                        }
+                    }
                 }
 
                 # Create and append entry to $media array
@@ -57,6 +63,26 @@ class Uploader {
             }
         }
         return $media;        
+    }
+    public static function store($data, $id, $model = 'posts', $mediaId = 0) {
+        $data = explode( ',', $data );
+
+        // we could add validation here with ensuring count( $data ) > 1
+        $binaryData = base64_decode( $data[ 1 ] );
+        $tempFileName = tempnam('/tmp/', 'upload_');
+
+        file_put_contents($tempFileName, $binaryData);
+
+        $files = [
+            [
+                'tmp_name'=>$tempFileName,
+                'name'=>$tempFileName,
+                'error'=>'',
+                'type'=>'image/jpg'
+            ]
+        ];
+        $uploader = new self();
+        return $uploader->handleFileUploads("$model/$id/", $files);
     }
     public function generateUniqueFilename($path, $prefix = '') {
         $uniqueName = tempnam($path, $prefix);

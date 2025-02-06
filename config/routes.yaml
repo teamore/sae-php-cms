@@ -137,6 +137,16 @@
   controller: MediaController
   action: show
 
+/uploadMedia:
+  match: '#^/upload/([a-z]+)/([0-9]+)/?([0-9]*)$#'
+  match_params:
+    1: model
+    2: id
+    3: media_id
+  method: POST
+  controller: MediaController
+  action: upload
+
 /search:
   controller: SearchController
 
