@@ -35,7 +35,7 @@ class DefaultController extends AbstractController
         if (!$result) {
             throw new \Exception("This Resource does not exist", 404);
         }
-        $result['media'] = json_decode($result['media']);   
+        $result['media'] = json_decode($result['media'] ?? "");   
         if ($uid) {
             $result2 = $this->getDbConnection()->query("
             SELECT `id` FROM `post_likes` WHERE `post`='$id' AND `user`='$uid';
@@ -126,7 +126,7 @@ class DefaultController extends AbstractController
             }
         }
         if ($files > 0) {
-            $sql = "UPDATE `posts` SET `media`='".json_encode($media)."' WHERE `id`='$data[id]'";
+            $sql = "UPDATE `posts` SET `media`='".json_encode($media)."' WHERE `id`='$data[id]' AND `user`='$user->id'";
             $this->getDbConnection()->exec($sql);    
         }
         return $result;
