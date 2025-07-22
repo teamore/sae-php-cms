@@ -3,11 +3,17 @@ namespace App;
 class Uploader {
     protected static String $uploadPath = '/var/www/html/public/assets/uploads/';
 
-    public static function show($id, $model = 'posts', $mediaId = 0) {
+    public static function getMedia($id, $model) {
         $sql = "SELECT `media` FROM `$model` WHERE `id`='$id';";
         $result = Database::connect()->query($sql)->fetchColumn();
         if ($result) {
-            $media = json_decode($result, true);
+            return json_decode($result, true);
+        }
+        return null;
+    }
+    public static function show($id, $model = 'posts', $mediaId = 0) {
+        $media = self::getMedia($id, $model);
+        if ($media) {
             $file = $media[$mediaId ? $mediaId : 0];
             $filename = self::$uploadPath . $file['path'];
             header("Content-Type: $file[type]");
@@ -19,10 +25,8 @@ class Uploader {
         die();
     }
     public static function delete($id, $model = 'posts', $mediaId = 0) {
-        $sql = "SELECT `media` FROM `$model` WHERE `id`='$id';";
-        $result = Database::connect()->query($sql)->fetchColumn();
-        if ($result) {
-            $media = json_decode($result, true);
+        $media = self::getMedia($id, $model);
+        if ($media) {
             $file = $media[$mediaId ? $mediaId : 0];
             $filename = self::$uploadPath . $file['path'];
             $thumbFilename = self::$uploadPath . $file['thumb'];
