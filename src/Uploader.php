@@ -17,7 +17,22 @@ class Uploader {
             throw new \Exception("No Media File available for this resource", 404);
         }
         die();
-
+    }
+    public static function delete($id, $model = 'posts', $mediaId = 0) {
+        $sql = "SELECT `media` FROM `$model` WHERE `id`='$id';";
+        $result = Database::connect()->query($sql)->fetchColumn();
+        if ($result) {
+            $media = json_decode($result, true);
+            $file = $media[$mediaId ? $mediaId : 0];
+            $filename = self::$uploadPath . $file['path'];
+            $thumbFilename = self::$uploadPath . $file['thumb'];
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+            if (file_exists($thumbFilename)) {
+                unlink($thumbFilename);
+            }           
+        }
     }
     public function handleFileUploads($path, $files = null):Array {
         $files = $files ?? $_FILES;
@@ -48,18 +63,17 @@ class Uploader {
                     if (!move_uploaded_file($file['tmp_name'], $fileDestination)) {
                         if (!rename($file['tmp_name'], $fileDestination)) {
                             throw new \Exception('Uploaded file could not be moved to designated destination', 500);
-                        }
+                        } 
                     }
                 }
-
-                # Create and append entry to $media array
+                                        # Create and append entry to $media array
                 $media[] = [
                     'path'=>$path.$file['target'], 
                     'type'=> $file['type'],
                     'thumb'=>$path . $file['thumb'],
                     'size'=>filesize($fileDestination), 
                     'original'=>$file['name']
-                ];           
+                ];          
             }
         }
         return $media;        
@@ -81,6 +95,7 @@ class Uploader {
                 'type'=>'image/jpg'
             ]
         ];
+        self::delete($id, $model, $mediaId);
         $uploader = new self();
         return $uploader->handleFileUploads("$model/$id/", $files);
     }

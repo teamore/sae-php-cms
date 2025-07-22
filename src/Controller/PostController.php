@@ -105,6 +105,7 @@ class PostController extends AbstractController {
         }
         
         $uploader = new Uploader();
+        Uploader::delete($data['id'], 'posts');
         $media = $uploader->handleFileUploads("posts/$data[id]/");
 
         # Store media array as JSON
