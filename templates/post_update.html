@@ -57,6 +57,10 @@
         const fileContentDisplay = document.getElementById("file-content");
         const messageDisplay = document.getElementById("message");
         fileInput.addEventListener("change", handleFileSelection);
+        function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
+            var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
+            return { width: srcWidth*ratio, height: srcHeight*ratio };
+        }
         function handleFileSelection(event) {
             const file = event.target.files[0];
             fileContentDisplay.textContent = ""; // Clear previous file content
@@ -72,9 +76,12 @@
             const reader = new FileReader();
             reader.onload = () => {
                 document.uploadedImage = reader.result;
-                fileContentDisplay.setAttribute("width", 300);
-                fileContentDisplay.setAttribute("height", 200);
                 fileContentDisplay.src = reader.result;
+                fileContentDisplay.onload = function() {
+                    size = calculateAspectRatioFit(this.width, this.height, 200, 200);
+                    this.width = size.width;
+                    this.height = size.height;
+                };
                 document.getElementById("update-image").disabled = false;
             };
             reader.onerror = () => {
