@@ -4,9 +4,11 @@ use \Test\AbstractTestCase;
 
 require __DIR__."/../src/autoload.php";
 final class RouterTest extends AbstractTestCase {
+    public function setUp(): void {
+       
+    }
     public function testRouting(): void {
-        // TODO: mount configuration folder instead of copying routes.yaml
-        $router = new Router('./config/routes.yaml', false);
+        $router = new Router('config/routes.yaml', false);
         ob_start();
         $testId = 2;
         $router->run('/posts/'.$testId, 'GET');
