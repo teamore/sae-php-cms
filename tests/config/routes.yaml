@@ -1,0 +1,128 @@
+/:
+  method: GET
+  alias: 
+    - index
+    - posts
+  controller: PostController # default: DefaultController
+  action: index # default: index
+
+/showLogin:
+  alias: login
+  method: GET
+  controller: UserController
+  action: showLogin
+
+/ApiSignup:
+  alias: api/signup
+  method: POST
+  controller: UserController
+  action: 
+
+/login:
+  method: POST
+  controller: UserController
+  action: doLogin
+  redirect: /
+
+/logout:
+  controller: UserController
+  action: doLogout
+  redirect: /
+
+/showSignup:
+  alias: signup
+  method: GET
+  controller: UserController
+  action: showSignup
+
+/signup:
+  alias: /api/users
+  method: POST
+  controller: UserController
+  action: doSignup
+  redirect: 
+    1: /
+    409: /signup
+
+/users/me:
+  alias: /api/users/me
+  method: POST
+  controller: UserController
+  action: update
+  redirect:
+    1: /
+
+/showUser:
+  match: '#^/users/([0-9]+)$#'
+  alias: users
+  match_params:
+    1: user_id
+  controller: UserController
+  action: userShow
+
+/showPost:
+  match: '#^/posts/([0-9]+)$#'
+  match_params:
+    1: post_id
+  controller: PostController
+  action: one
+
+/editPost:
+  match: '#^/posts/edit/([0-9]*)$#'
+  match_params:
+    1: post_id
+  controller: PostController
+  action: edit
+
+/newPost:
+  match: '#^/posts/edit$#'
+  controller: PostController
+  action: edit
+
+/savePost:
+  method: POST
+  alias: posts
+  controller: PostController
+  action: save
+  redirect: /
+
+/killPost:
+  match: '#^/posts/([0-9]+)$#'
+  method: DELETE
+  controller: PostController
+  action: delete
+  redirect: /
+
+/likePost:
+  match: '#^/posts/([0-9]+)/like$#'
+  match_params:
+    1: post_id
+  method: PUT
+  controller: PostController
+  action: like
+
+/unlikePost:
+  match: '#^/posts/([0-9]+)/like$#'
+  match_params:
+    1: post_id
+  method: DELETE
+  controller: PostController
+  action: unlike
+
+/showMedia:
+  alias: media
+  match: '#^/media/posts/([0-9]+)/?([0-9]*)$#'
+  match_params:
+    1: post_id
+    2: media_id
+  method: GET
+  controller: MediaController
+  action: show
+
+/search:
+  controller: SearchController
+
+/me:
+  alias: /me/edit
+  controller: UserController
+  action: edit
