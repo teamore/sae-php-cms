@@ -3,10 +3,12 @@ namespace App;
 class Router {
     private $routeConfigurationFile = "../config/routes.yaml";
     private $routing = null;
-    public function __construct($routeConfigurationFile = null) { 
+    public function __construct($routeConfigurationFile = null, $autoRun = true) { 
         $this->readRouteConfiguration($routeConfigurationFile);
         //$this->start();
-        $this->run();
+        if ($autoRun) {
+            $this->run();
+        }
     }
     public function readRouteConfiguration($routeConfigurationFile) {
         if (!is_null($routeConfigurationFile)) {
@@ -19,20 +21,18 @@ class Router {
         }
 
     }
-    public function run($uri = null, $method = null, $messages = []) {
+    public function run($uri = null, $method = null, $messages = [], $headers = ['Accept'=>'application/json']) {
         
         /* get parameters and body content from request */
         $requestUri = parse_url($uri ?? $_SERVER['REQUEST_URI']);
         $requestMethod = $method ?? $_SERVER['REQUEST_METHOD'];
         $requestPath = $requestUri['path'];
         parse_str($requestUri['query'] ?? '', $requestQuery);
-        $headers = getallheaders();
-
+        $headers = function_exists('getallheaders') ? getallheaders() : $headers;
         $routeMatches = 0;
 
         /* strip trailing slash */
         $requestPath = (strlen($requestPath) > 1 && substr($requestPath, strlen($requestPath) - 1, 1) === '/') ? substr($requestPath, 0, -1) : $requestPath;
-
         /* iterate trough defined routes */
         foreach($this->routing as $route => $config) {
             /* create a list of request methods */
@@ -87,7 +87,7 @@ class Router {
             } else if (in_array('application/json', explode(",",$headers['Accept']))) {
                 header('Content-Type: application/json');
                 echo json_encode(["payload" => $controller->getPayload(), "result" => $result, "messages" => $controller->getMessages()]);
-                die();
+                return;
             }
 
             /* redirect to another route if specified while keeping current message stack */
