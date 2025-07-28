@@ -32,3 +32,7 @@ In order to log in as test user, please call this URL:
 `http://localhost:8080/?action=login_show`
 and log in with these test credentials:
 username `testuser1` and password `12345`
+
+# Execute predefined PHPUNIT-tests
+To run the defined phpunit tests, please execute this instruction in your terminal:
+`./vendor/phpunit/phpunit/phpunit tests`
