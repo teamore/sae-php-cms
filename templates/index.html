@@ -132,6 +132,10 @@
                 </tr>
             {% endfor %}
         </table>
+        {% else %}
+        <div>
+            Your search returned no results
+        </div>
     {% endif %}
     <div>
         <button onclick="location.href='/posts/edit';">add</button>
