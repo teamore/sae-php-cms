@@ -2,17 +2,20 @@
 {% block title %}Edit {{result.title}}{% endblock %}
 {% block script %}
     <script>
-    async function updateImage(id, data) {
-        console.log("uploading image");
-        console.log(data);
-        var response = await fetch('/upload/posts/'+id, {
-                method: 'POST',
-                body: data,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-            handleResponse(response, false);        
+    async function updateMedia(id, data) {
+        console.log("uploading media files");
+        for (let mediaId in data) {
+            let file = data[mediaId];
+            console.log(file);
+            var response = await fetch('/upload/posts/'+id+'/'+mediaId, {
+                    method: 'POST',
+                    body: file,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+            handleResponse(response, false);   
+        }     
     } 
     </script>
 {% endblock %}
@@ -31,16 +34,16 @@
             <textarea name="content">{{result.content}}</textarea>
         </div>
         <div>
-            <label for="image">Image</label>
-            <input type="file" id="file-input" name="image" accept="image/png, image/jpeg">
+            <label for="media">Media File(s)</label>
+            <input type="file" id="file-input" name="media[]" accept="image/png, image/jpeg" multiple>
             <div id="message"></div>
             <img id="file-content" />
-            <button type="button" id="update-image" disabled onclick="updateImage({{result.id}},document.uploadedImage);">update image</button>
+            <button type="button" id="update-image" disabled onclick="updateMedia({{result.id}},document.providedFiles);">update image</button>
         </div>
-        <div>
+        <!-- div>
             <label for="sound">Sound File</label>
             <input type="file" name="sound" accept="audio/mpeg, audio/wav">
-        </div>
+        </div -->
         <div>
             {% if result.id %}
                 <label for="update"></label>
@@ -62,7 +65,12 @@
             return { width: srcWidth*ratio, height: srcHeight*ratio };
         }
         function handleFileSelection(event) {
-            const file = event.target.files[0];
+            document.providedFiles = []; 
+            for (let file of event.target.files) {
+                handleFile(file);
+            }
+        }
+        function handleFile(file) {
             fileContentDisplay.textContent = ""; // Clear previous file content
             messageDisplay.textContent = ""; // Clear previous messages
 
@@ -75,7 +83,8 @@
             // Read the file
             const reader = new FileReader();
             reader.onload = () => {
-                document.uploadedImage = reader.result;
+                console.log("file uploaded", file);
+                document.providedFiles.push(reader.result);
                 fileContentDisplay.src = reader.result;
                 fileContentDisplay.onload = function() {
                     size = calculateAspectRatioFit(this.width, this.height, 200, 200);

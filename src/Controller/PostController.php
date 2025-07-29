@@ -110,7 +110,7 @@ class PostController extends AbstractController {
 
         # Store media array as JSON
         if (count($media) > 0) {
-            Post::attachMedia($media, $data['id']);
+            Post::attachMedia($media['media'], $data['id']);
         }
         return $result;
     }

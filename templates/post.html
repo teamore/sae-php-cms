@@ -38,7 +38,11 @@
         </tr>
         <tr>
             <td>Media</td>
-            <td><img src="/media/posts/{{result.id}}" width="400px"></td>
+            <td>
+                {% for i, file in result.media %}
+                    <img src="/media/posts/{{result.id}}/{{i}}" width="400px">
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <td>Date</td>

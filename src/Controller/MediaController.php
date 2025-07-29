@@ -22,9 +22,9 @@ class MediaController extends AbstractController
         $media = Uploader::store($payload, $id, $model, $mediaId);    
         if (count($media) > 0) {
             if ($model === 'posts') {
-                Post::attachMedia($media, $id);
+                Post::addFileToMedia($media, $id, $mediaId);
             } else if ($model === 'users') {
-                User::attachMedia($media, $id);
+                User::addFileToMedia($media, $id, $mediaId);
             } 
         }
     }
