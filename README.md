@@ -34,5 +34,5 @@ and log in with these test credentials:
 username `testuser1` and password `12345`
 
 # Execute predefined PHPUNIT-tests
-To run the defined phpunit tests, please execute this instruction in your terminal:
+To run the defined phpunit tests, please execute this instruction in your terminal inside the `sae-php-cms` container:
 `./vendor/phpunit/phpunit/phpunit tests`
