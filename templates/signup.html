@@ -36,6 +36,7 @@
         {% endif %}
         <div>
             <label for="media">Profile Image</label>
+            <img class="profileImage" src="/media/users/{{user.id}}"/>
             <input type="file" name="media" />
         </div>
         <div><input type="submit" value="{% if user %}update profile{% else %}signup{% endif %}"></div>

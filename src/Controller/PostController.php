@@ -1,6 +1,8 @@
 <?php
 namespace App\Controller;
+use App\Config;
 use App\Model\Post;
+use App\Model\PostComment;
 use App\Model\PostLike;
 use App\Traits\Paginatable;
 use App\Uploader;
@@ -10,12 +12,14 @@ class PostController extends AbstractController {
     {
         $filter = isset($_REQUEST['filter']) ? array_filter($_REQUEST['filter']) : null;
         $this->setPagination(Post::count($filter));
+        $this->setResultsPerPage($_REQUEST['per_page'] ?? Config::getConfig('paginator')['per_page']);
 
         $results = Post::all($filter, $this->resultsPerPage, (($this->currentPage) - 1) * ($this->resultsPerPage));
 
         $this->setView('index.html', [
             'results' => $results,
-            'filter' => $filter
+            'filter' => $filter,
+            'paginatorConfig' => Config::getConfig('paginator')
         ]);
     }
     public function one($id = null) {
@@ -32,8 +36,38 @@ class PostController extends AbstractController {
             $result2 = PostLike::findBy("`post`='$id' AND `user`='$uid'", "id");
             $result['ilike'] = ($result2 !== false);
         }            
+        $comments = $this->db()->query("SELECT * FROM `post_comments` WHERE `post`='$id';")->fetchAll();
+        $result['comments'] = $comments;
         # call view
         $this->setView('post.html', ['result' => $result]);
+    }
+    public function comment($id = null) {
+        $id = $this->query['post_id'] ?? 0;
+        $uid = $this->getUserId(true);
+        $result = PostComment::insert($id, $uid, $_POST['content'], $_POST['title']);
+        return $this->one($id);
+    }
+    public function uncomment($commentId = null) {
+        $commentId = $this->query['comment_id'] ?? 0;
+        $uid = $this->getUserId(true);
+        if ($uid) {
+            $comment = PostComment::find($commentId);
+            if ($uid != $comment['user']) {
+                $authorId = Post::find($comment['post'], 'p.`user`');
+                if ($authorId != $uid) {
+                    throw new \Exception('Users are not allowed to delete foreign Comments', 403);
+                }
+            }
+        }            
+        try {
+            $result = PostComment::delete($commentId);
+        } catch (\PDOException $e) {
+            throw new \Exception($e->getMessage(),500);
+        }
+        if (!$result) {
+            throw new \Exception("This resource has already been deleted.",304);
+        }
+        return ["affectedRows" => $result];
     }
     public function edit($id = null) {
         $id = $this->query['post_id'] ?? 0;
@@ -59,7 +93,7 @@ class PostController extends AbstractController {
             throw new \Exception('Only authenticated Users may create Posts', 401);
         }
         $data['user'] = $user->id;
-        if ($data['id']) {
+        if ($data['id'] ?? null) {
             if (!is_numeric($data['id'])) {
                 return;
             }
@@ -67,9 +101,11 @@ class PostController extends AbstractController {
             
         } else {
             $data['id'] = Post::insert($data);
-            $result = $data['id'] > 0;
+            $result = $data['id'];
         }
+        
         $uploader = new Uploader();
+        Uploader::delete($data['id'], 'posts');
         $media = $uploader->handleFileUploads("posts/$data[id]/");
 
         # Store media array as JSON
@@ -79,16 +115,21 @@ class PostController extends AbstractController {
         return $result;
     }
     public function delete($id = null) {
-        $id = $id ?? $this->query['post_id'];
+        $id = $id ?? $this->query['post_id'] ?? null;
+        if (!$id) {
+            throw new \Exception('You may only delete existing posts', 404);
+        }
         $uid = $this->getUserId(true);
         $media = $this->db()->query("SELECT `media` FROM `posts` WHERE `id`='$id';")->fetchColumn();
-        $media = json_decode($media, true);
-        foreach($media as $file) {
-            unlink("/var/www/html/public/".$file['path'].$file['name']);
-            unlink("/var/www/html/public/".$file['thumb']);
+        if ($media) {
+            $media = json_decode($media, true);
+            foreach($media as $file) {
+                unlink("/var/www/html/public/".$file['path'].$file['name']);
+                unlink("/var/www/html/public/".$file['thumb']);
+            }
         }
         $result = $this->db()->exec("DELETE FROM `posts` WHERE `id`='$id' AND `user`='$uid' LIMIT 1;");
-        return $this->index();
+        return $result;
     }
     public function like($id = null) {
         $postId = $id ?? $this->query['post_id'];
@@ -111,7 +152,7 @@ class PostController extends AbstractController {
         $uid = $this->getUserId(true);
 
         try {
-            $result = PostLike::delete($postId, $uid);
+            $result = PostLike::unlike($postId, $uid);
         } catch (\PDOException $e) {
             throw new \Exception($e->getMessage(),500);
         }

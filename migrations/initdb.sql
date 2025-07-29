@@ -152,3 +152,76 @@ ALTER TABLE `post_likes`
   ADD CONSTRAINT `post_likes_ibfk_1` FOREIGN KEY (`post`) REFERENCES `posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `post_likes_ibfk_2` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
+
+--
+-- Host: mysql
+-- Erstellungszeit: 05. Feb 2025 um 20:40
+-- Server-Version: 8.0.40
+-- PHP-Version: 8.2.27
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+--
+-- Datenbank: `sae-cms`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `post_comments`
+--
+
+CREATE TABLE `post_comments` (
+  `id` int UNSIGNED NOT NULL,
+  `user` int UNSIGNED NOT NULL,
+  `post` int UNSIGNED NOT NULL,
+  `title` varchar(120) DEFAULT NULL,
+  `content` varchar(1000) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Daten für Tabelle `post_comments`
+--
+
+INSERT INTO `post_comments` (`id`, `user`, `post`, `title`, `content`, `created_at`, `updated_at`) VALUES
+(2, 3, 2, 'Grandios!', 'Ich möchte mich herzlich bedanken für diesen erstklassigen Beitrag.', '2025-02-05 19:13:15', '2025-02-05 19:13:15'),
+(3, 3, 2, 'Test 2.5', 'Belangloser Kommentartext', '2025-02-05 19:32:03', '2025-02-05 19:32:03'),
+(24, 1, 2, 'Kommentar', 'von mir', '2025-02-05 20:28:57', '2025-02-05 20:28:57');
+
+--
+-- Indizes der exportierten Tabellen
+--
+
+--
+-- Indizes für die Tabelle `post_comments`
+--
+ALTER TABLE `post_comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_comments_user` (`user`),
+  ADD KEY `fk_comments_post` (`post`);
+
+--
+-- AUTO_INCREMENT für exportierte Tabellen
+--
+
+--
+-- AUTO_INCREMENT für Tabelle `post_comments`
+--
+ALTER TABLE `post_comments`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
+--
+-- Constraints der exportierten Tabellen
+--
+
+--
+-- Constraints der Tabelle `post_comments`
+--
+ALTER TABLE `post_comments`
+  ADD CONSTRAINT `fk_comments_post` FOREIGN KEY (`post`) REFERENCES `posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_comments_user` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;

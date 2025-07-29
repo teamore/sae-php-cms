@@ -29,10 +29,10 @@ class Post extends AbstractModel {
         return $results;
     }
 
-    public static function find($id) {
+    public static function find($id, $fields = "p.*, u.`username`, u.`email`, COUNT(l.`id`) AS `likes`") {
         # retrieve results
         return Database::connect()->query("
-            SELECT p.*, u.`username`, u.`email`, COUNT(l.`id`) AS `likes` FROM `".self::getTable()."` p 
+            SELECT $fields FROM `".self::getTable()."` p 
             LEFT JOIN
                 `".User::getTable()."` u
             ON p.`user` = u.`id`
@@ -48,7 +48,7 @@ class Post extends AbstractModel {
         return Database::connect()->query("
             UPDATE `".self::$table."` SET 
             `title`='$data[title]',
-            `author`='$data[author]',
+            `author`='".($data['author'] ?? '')."',
             `content`='$data[content]',
             `updated_at`='".date('Y-m-d H:i:s')."'
             WHERE 
@@ -68,7 +68,7 @@ class Post extends AbstractModel {
             ) VALUES (
                 '$data[title]',
                 '$data[user]',
-                '$data[author]',
+                '".($data['author'] ?? '')."',
                 '$data[content]',
                 '".date('Y-m-d H:i:s')."',
                 '".date('Y-m-d H:i:s')."'

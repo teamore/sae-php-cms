@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block script %}
     <script>
+        async function deleteComment(id, postId) {
+            console.log("delete comment #"+id);
+            var response = await fetch('/comments/'+id, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            handleResponse(response, false);
+            window.location = "/posts/"+postId;
+        }
         async function sendPostLikeRequest(id, method = "PUT") {
             console.log("send like request for post #id "+id);
             var response = await fetch('/posts/'+id+'/like', {
@@ -17,20 +28,53 @@
 {% block title %}{{result.title}}{% endblock %}
 {% block content %}
     <table>
-        {% for key, value in result %}
-            <tr>
-                <td>{{key}}</td>
-                <td>{% if key == 'media' %}
-                    {% for i, file in value %}
-                        <img src="/media/posts/{{result.id}}" width="400px">
-                    {% endfor %}
-                    {% else %}
-                    {{value}}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
+        <tr>
+            <td>Title</td>
+            <td>{{result.title}}</td>
+        </tr>
+        <tr>
+            <td>Content</td>
+            <td>{{result.content}}</td>
+        </tr>
+        <tr>
+            <td>Media</td>
+            <td><img src="/media/posts/{{result.id}}" width="400px"></td>
+        </tr>
+        <tr>
+            <td>Date</td>
+            <td>{{result.created_at}} (last edited: {{result.updated_at}})</td>
+        </tr>
+        <tr>
+            <td>Likes</td>
+            <td>{{result.likes}}</td>
+        </tr>
+        <tr>
+            <td>i like</td>
+            <td>{{result.ilike}}</td>
+        </tr>
     </table>
+    <div id="comments">
+        {% for comment in result.comments %}
+            <div>
+                {{comment.title}}
+                {{comment.content}}
+                <button onclick="deleteComment({{comment.id}}, {{result.id}});">x</button>
+            </div>
+        {% endfor %}
+        <form method="POST" action="/posts/{{result.id}}/comment">
+            <div>
+                <label for="title">Title</label>
+                <input type="text" name="title" placeholder="Enter title (optional)"/>
+            </div>
+            <div>
+                <label for="content">Your Comment</label>
+                <textarea name="content"></textarea>
+            </div>
+            <div>
+                <input type="submit" value="send" />
+            </div>
+        </form>
+    </div>
     <div>
         {% if result.ilike %}
         <button onclick="sendPostLikeRequest({{result.id}}, 'DELETE');">unlike</button>
