@@ -3,20 +3,45 @@ namespace App;
 class Uploader {
     protected static String $uploadPath = '/var/www/html/public/assets/uploads/';
 
-    public static function show($id, $model = 'posts', $mediaId = 0) {
-        $result = Database::connect()->query("SELECT media FROM `posts` WHERE `id`='$id';")->fetchColumn();
-        $media = json_decode($result, true);
-        $file = $media[$mediaId ? $mediaId : 0];
-        $filename = self::$uploadPath . $file['path'];
-        header("Content-Type: $file[type]");
-        header("Content-Length: ".filesize($filename));
-        echo file_get_contents($filename);
-        die();
-
+    public static function getMedia($id, $model) {
+        $sql = "SELECT `media` FROM `$model` WHERE `id`='$id';";
+        $result = Database::connect()->query($sql)->fetchColumn();
+        if ($result) {
+            return json_decode($result, true);
+        }
+        return null;
     }
-    public function handleFileUploads($path):Array {
+    public static function show($id, $model = 'posts', $mediaId = 0) {
+        $media = self::getMedia($id, $model);
+        if ($media) {
+            $file = $media[$mediaId ? $mediaId : 0];
+            $filename = self::$uploadPath . $file['path'];
+            header("Content-Type: $file[type]");
+            header("Content-Length: ".$file['size']);
+            echo file_get_contents($filename);   
+        } else {
+            throw new \Exception("No Media File available for this resource", 404);
+        }
+        die();
+    }
+    public static function delete($id, $model = 'posts', $mediaId = 0) {
+        $media = self::getMedia($id, $model);
+        if ($media) {
+            $file = $media[$mediaId ? $mediaId : 0];
+            $filename = self::$uploadPath . $file['path'];
+            $thumbFilename = self::$uploadPath . $file['thumb'];
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+            if (file_exists($thumbFilename)) {
+                unlink($thumbFilename);
+            }           
+        }
+    }
+    public function handleFileUploads($path, $files = null):Array {
+        $files = $files ?? $_FILES;
         $media = [];
-        foreach($_FILES as $file) {
+        foreach($files as $file) {
             if ($file['name'] && $file['error']) {
                 throw new \Exception("File ".$file['name']." could not be uploaded. (error $file[error])", 422);
             }
@@ -37,21 +62,46 @@ class Uploader {
                 
                 # Move temporary file to final destination
                 $fileDestination = $fullPath . $file['target'];
+                
                 if (!file_exists($fileDestination)) {
-                    move_uploaded_file($file['tmp_name'], $fileDestination);
+                    if (!move_uploaded_file($file['tmp_name'], $fileDestination)) {
+                        if (!rename($file['tmp_name'], $fileDestination)) {
+                            throw new \Exception('Uploaded file could not be moved to designated destination', 500);
+                        } 
+                    }
                 }
-
-                # Create and append entry to $media array
+                                        # Create and append entry to $media array
                 $media[] = [
                     'path'=>$path.$file['target'], 
                     'type'=> $file['type'],
                     'thumb'=>$path . $file['thumb'],
                     'size'=>filesize($fileDestination), 
                     'original'=>$file['name']
-                ];           
+                ];          
             }
         }
         return $media;        
+    }
+    public static function store($data, $id, $model = 'posts', $mediaId = 0) {
+        $data = explode( ',', $data );
+
+        // we could add validation here with ensuring count( $data ) > 1
+        $binaryData = base64_decode( $data[ 1 ] );
+        $tempFileName = tempnam('/tmp/', 'upload_');
+
+        file_put_contents($tempFileName, $binaryData);
+
+        $files = [
+            [
+                'tmp_name'=>$tempFileName,
+                'name'=>$tempFileName,
+                'error'=>'',
+                'type'=>'image/jpg'
+            ]
+        ];
+        self::delete($id, $model, $mediaId);
+        $uploader = new self();
+        return $uploader->handleFileUploads("$model/$id/", $files);
     }
     public function generateUniqueFilename($path, $prefix = '') {
         $uniqueName = tempnam($path, $prefix);

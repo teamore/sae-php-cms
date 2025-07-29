@@ -1,0 +1,3 @@
+paginator:
+  mode: classic # options: endless, classic (default)
+  per_page: 5

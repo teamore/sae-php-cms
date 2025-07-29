@@ -15,7 +15,11 @@ trait Paginatable {
         $this->currentPage = $currentPage ?? $_REQUEST['page'] ?? 1;
        
         # enforce min/max currentPage #
-        $this->currentPage = $this->currentPage > $this->pagesAmount ? $this->pagesAmount : ($this->currentPage < 1 ? 1 : $this->currentPage);
+        $this->currentPage = $this->currentPage < 1 ? 1 : (int) $this->currentPage;
+    }
+    public function setResultsPerPage($value) {
+        $this->resultsPerPage = $value;
+        $this->pagesAmount = ceil($this->resultsAmount / $this->resultsPerPage);
     }
     public function addPaginatorToPayload(&$payload) {
         $payload['paginator'] = [

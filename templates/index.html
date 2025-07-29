@@ -11,7 +11,6 @@
                         'Content-Type': 'application/json'
                     }
                 }).then((response)=>{
-                    console.log(response.text());
                     window.location = '/';
                 });
             }
@@ -22,12 +21,63 @@
             }
             location.href="/"+type+"/"+id;
         }
+        function addRow(data, type = 'posts') {
+            const newRow = 
+                `<tr>
+                    <td>`+data.title+`</td>
+                    <td>`+data.username+`</td>
+                    <td>`+data.category+`</td>
+                    <td>`+(data.media ? `<img src="/media/`+type+`/`+data.id+`" width="100px">` : ``)+`</td>
+                    <td>`+data.created_at+`</td>
+                    <td>
+                        <button onclick="showEntry(`+data.id+`, '`+type+`')">show</button>
+                        `+(data.user == '{{ user.id }}' ? `
+                        <button onclick="showEntry('edit/`+data.id+`')">edit</button>
+                        <button onclick="sendDeleteRequest(`+data.id+`,'`+data.title+`');">kill</button>` : '')+`
+                    </td>
+                </tr>`;
+            document.getElementById('resultsTable').
+            getElementsByTagName('tbody')[0].
+            insertAdjacentHTML('beforeend', newRow);
+        }
+        async function addRows() {
+            document.currentPage++;
+            await fetch('/posts?page='+document.currentPage+'&per_page='+getURLParam('per_page', {{ paginatorConfig.per_page|default(5)}})+'&filter[category]='+getURLParam('filter[category]', ''), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    const results = data.payload.results;
+                    for(result of results) {
+                        addRow(result);
+                    }
+                })            
+        }
+        let params = new URLSearchParams(window.location.search);
+        document.currentPage = 1;
+        document.endlessScrolling = {% if paginatorConfig.mode == 'endless' %}true{% else %}false{% endif %};
+        
+        function getURLParam(name, def = false) {
+            return params.get(name) ?? def; 
+        }
+        window.addEventListener('scroll', function() {
+            var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
+            var body = document.body, html = document.documentElement;
+            var docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,  html.scrollHeight, html.offsetHeight);
+            var windowBottom = windowHeight + window.pageYOffset;
+
+            if (windowBottom >= docHeight - 5 && document.endlessScrolling) {
+                addRows();
+            }
+        });
     </script>
 {% endblock %}
-{% block content %}
-    {% if results|length >= 1 %}
-        {% if paginator %}
-            <div class="pagination">
+{% block paginator %}
+    {% if paginator and results|length >= 1 %}
+        <div class="pagination">
+            {% if paginatorConfig.mode != 'endless' %}
                 {% if paginator.currentPage > 1 %}
                     <a href="/posts?page={{paginator.currentPage - 1}}&per_page={{paginator.perPage}}&filter[category]={{filter.category}}"">&lt;</a>
                 {% else %}
@@ -41,14 +91,18 @@
                 {% else %}
                     <span class="disabled">></span>
                 {% endif %}
-                Filter: Category 
-                <a href="/posts?filter[category]=A">A</a>
-                <a href="/posts?filter[category]=B">B</a>
-                <a href="/posts?filter[category]=C">C</a>
-                <a href="/posts?filter[category]=">reset</a>
-            </div>
-        {% endif %}
-        <table>
+            {% endif %}
+            Filter: Category 
+            <a href="/posts?filter[category]=A">A</a>
+            <a href="/posts?filter[category]=B">B</a>
+            <a href="/posts?filter[category]=C">C</a>
+            <a href="/posts?filter[category]=">reset</a>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    {% if results|length >= 1 %}
+        <table id="resultsTable">
             <tr>
                 <th>Title</th>
                 <th>Author</th>

@@ -82,11 +82,15 @@ class Router {
                 http_response_code((int) $exception->getCode());
                 $controller->setView('error.html');
             }
-            if ($controller->getView() && in_array('text/html', explode(",",$headers['Accept']))) {
+            $acceptHeaders = explode(",",$headers['Accept']);
+            if ($controller->getView() && (in_array('text/html', $acceptHeaders) || in_array('*/*', $acceptHeaders))) {
                 $controller->display();
-            } else if (in_array('application/json', explode(",",$headers['Accept']))) {
+            } else if (in_array('application/json', $acceptHeaders)) {
                 header('Content-Type: application/json');
                 echo json_encode(["payload" => $controller->getPayload(), "result" => $result, "messages" => $controller->getMessages()]);
+                return;
+            } else if (in_array('application/yaml', $acceptHeaders)) {
+                echo yaml_emit(["payload" => $controller->getPayload(), "result" => $result, "messages" => $controller->getMessages()]);
                 return;
             }
 
