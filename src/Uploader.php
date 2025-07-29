@@ -28,7 +28,7 @@ class Uploader {
         $media = self::getMedia($id, $model);
         if ($media) {
             foreach ($media as $i => $file) {
-                if ($i === $mediaId || is_null($mediaId)) {
+                if (($i == $mediaId) || is_null($mediaId)) {
                     $filename = self::$uploadPath . $file['path'];
                     $thumbFilename = self::$uploadPath . $file['thumb'];
                     if (file_exists($filename)) {

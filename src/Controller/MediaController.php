@@ -19,6 +19,7 @@ class MediaController extends AbstractController
         $id = $this->query['id'];
         $mediaId = $this->query['media_id'];
         $payload = file_get_contents('php://input');
+        Uploader::delete($id, $model, $mediaId);
         $media = Uploader::store($payload, $id, $model, $mediaId);    
         if (count($media) > 0) {
             if ($model === 'posts') {
